@@ -1,0 +1,83 @@
+.bg-image {
+    background-size: 40%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#login-illustration {
+    background-image: url("/img/undraw-login-illustration.svg");
+    background-size: 200px;
+}
+
+#register-illustration {
+    background-image: url("/img/undraw-sign-up-illustration.svg");
+}
+
+#not-found-illustration {
+    background-image: url("/img/undraw-not-found-illustration.svg");
+    background-size: 300px;
+    height: 300px;
+}
+
+#cart-popover-content {
+    display: none;
+}
+
+.likes-count {
+    font-size: 16px;
+}
+
+@media screen and (min-width: 768px) {
+    .event-card-internal {
+        min-height: 250px;
+    }
+
+    .order-card-internal {
+        min-height: 150px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .btn-md-full-width {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .sidebar-collapse {
+        display: block !important;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .btn-lg-full-width {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.event-card-image {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.add-favourite-btn,
+.remove-favourite-btn {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-card {
+    transition: all 0.5s ease;
+}
+
+.feature-card.deleted {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+#commentTextarea {
+    resize: none;
+}

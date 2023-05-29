@@ -1,0 +1,431 @@
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `annual_income`;
+/*!50001 DROP VIEW IF EXISTS `annual_income`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `annual_income` (
+  `date` tinyint NOT NULL,
+  `income` tinyint NOT NULL,
+  `orders_count` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category` (
+  `id_category` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (`id_category`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `city`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `city` (
+  `id_city` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `center` point NOT NULL,
+  PRIMARY KEY (`id_city`),
+  UNIQUE KEY `name_UNIQUE` (`name`),
+  SPATIAL KEY `spatial_idx_center` (`center`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `comment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `comment` (
+  `id_comment` int(11) NOT NULL AUTO_INCREMENT,
+  `content` varchar(200) COLLATE utf8mb4_bin NOT NULL,
+  `likes_count` int(7) DEFAULT 0,
+  `id_user` int(11) NOT NULL,
+  `id_event` int(11) NOT NULL,
+  `created_datetime` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_comment`),
+  KEY `fk_Comment_User1_idx` (`id_user`),
+  KEY `fk_Comment_Event1_idx` (`id_event`),
+  CONSTRAINT `fk_Comment_Event1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Comment_User1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='			';
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `daily_income`;
+/*!50001 DROP VIEW IF EXISTS `daily_income`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `daily_income` (
+  `date` tinyint NOT NULL,
+  `income` tinyint NOT NULL,
+  `orders_count` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event` (
+  `id_event` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tags` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_category` int(11) NOT NULL,
+  `start_datetime` datetime NOT NULL,
+  `ticket_price` decimal(10,2) NOT NULL,
+  `ticket_count` int(7) NOT NULL,
+  `postal_code` varchar(6) COLLATE utf8mb4_bin NOT NULL,
+  `id_city` int(11) NOT NULL,
+  `street` varchar(65) COLLATE utf8mb4_bin NOT NULL,
+  `likes_count` int(7) DEFAULT 1,
+  `is_adult_only` tinyint(4) DEFAULT 0,
+  `is_draft` tinyint(4) DEFAULT 1,
+  `id_user` int(11) DEFAULT NULL,
+  `created_datetime` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_event`),
+  KEY `fk_Event_City1_idx` (`id_city`),
+  KEY `fk_Event_Category1_idx` (`id_category`),
+  KEY `idx_start_datetime` (`start_datetime`),
+  KEY `idx_likes_count` (`likes_count`),
+  KEY `idx_is_adult_only` (`is_adult_only`),
+  KEY `idx_created_datetime` (`created_datetime`),
+  KEY `idx_is_draft` (`is_draft`),
+  KEY `fk_Event_User1_idx` (`id_user`),
+  FULLTEXT KEY `idx_name_description_tags` (`name`,`description`,`tags`),
+  CONSTRAINT `fk_Event_Category1` FOREIGN KEY (`id_category`) REFERENCES `category` (`id_category`),
+  CONSTRAINT `fk_Event_City1` FOREIGN KEY (`id_city`) REFERENCES `city` (`id_city`),
+  CONSTRAINT `fk_Event_User1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `event_medium`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_medium` (
+  `id_event` int(11) NOT NULL,
+  `id_medium` int(11) NOT NULL,
+  PRIMARY KEY (`id_event`,`id_medium`),
+  KEY `fk_Event_medium_Medium1_idx` (`id_medium`),
+  KEY `fk_Event_medium_Event1_idx` (`id_event`),
+  CONSTRAINT `fk_Event_medium_Event1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Event_medium_Medium1` FOREIGN KEY (`id_medium`) REFERENCES `medium` (`id_medium`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `events_list`;
+/*!50001 DROP VIEW IF EXISTS `events_list`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `events_list` (
+  `id_event` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `excerpt` tinyint NOT NULL,
+  `image` tinyint NOT NULL,
+  `tags` tinyint NOT NULL,
+  `category_name` tinyint NOT NULL,
+  `start_datetime` tinyint NOT NULL,
+  `ticket_price` tinyint NOT NULL,
+  `ticket_count` tinyint NOT NULL,
+  `city_name` tinyint NOT NULL,
+  `likes_count` tinyint NOT NULL,
+  `is_adult_only` tinyint NOT NULL,
+  `created_datetime` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `follow`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `follow` (
+  `id_user` int(11) NOT NULL,
+  `id_event` int(11) NOT NULL,
+  `created_datetime` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_user`,`id_event`),
+  KEY `fk_Follow_User_idx` (`id_user`),
+  KEY `fk_Follow_Event1_idx` (`id_event`),
+  CONSTRAINT `fk_Follow_Event1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Follow_User` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `medium`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `medium` (
+  `id_medium` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `type` enum('IMAGE','VIDEO') COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (`id_medium`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='			';
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `monthly_income`;
+/*!50001 DROP VIEW IF EXISTS `monthly_income`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `monthly_income` (
+  `date` tinyint NOT NULL,
+  `income` tinyint NOT NULL,
+  `orders_count` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `order` (
+  `id_user` int(11) NOT NULL,
+  `id_event` int(11) NOT NULL,
+  `id_order` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `created_datetime` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_user`,`id_event`),
+  UNIQUE KEY `id_order_UNIQUE` (`id_order`),
+  KEY `fk_Order_User1_idx` (`id_user`),
+  KEY `fk_Order_Event1_idx` (`id_event`),
+  KEY `idx_created_datetime` (`created_datetime`),
+  KEY `idx_id_order` (`id_order`),
+  CONSTRAINT `fk_Order_Event1` FOREIGN KEY (`id_event`) REFERENCES `event` (`id_event`),
+  CONSTRAINT `fk_Order_User1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `orders_count_by_category`;
+/*!50001 DROP VIEW IF EXISTS `orders_count_by_category`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `orders_count_by_category` (
+  `id_category` tinyint NOT NULL,
+  `category_name` tinyint NOT NULL,
+  `orders_count` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `orders_list`;
+/*!50001 DROP VIEW IF EXISTS `orders_list`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `orders_list` (
+  `id_user` tinyint NOT NULL,
+  `email` tinyint NOT NULL,
+  `user_name` tinyint NOT NULL,
+  `surname` tinyint NOT NULL,
+  `id_event` tinyint NOT NULL,
+  `event_name` tinyint NOT NULL,
+  `ticket_price` tinyint NOT NULL,
+  `id_order` tinyint NOT NULL,
+  `created_datetime` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `personal_access_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id_user` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(150) COLLATE utf8mb4_bin NOT NULL,
+  `password` varchar(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `name` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `surname` varchar(65) COLLATE utf8mb4_bin NOT NULL,
+  `birthdate` date NOT NULL,
+  `is_active` tinyint(4) DEFAULT 1,
+  `role` enum('USER','MODERATOR') COLLATE utf8mb4_bin DEFAULT 'USER',
+  `created_datetime` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_user`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  KEY `idx_created_datetime` (`created_datetime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 DROP FUNCTION IF EXISTS `generate_excerpt` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `generate_excerpt`(content TEXT, length SMALLINT UNSIGNED, suffix VARCHAR(10)) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_bin
+    DETERMINISTIC
+BEGIN
+	Declare excerpt TEXT;
+    Declare last_occurance SMALLINT UNSIGNED;
+    
+    if CHAR_LENGTH(content) <= length THEN
+		SET excerpt = content;
+	ELSE
+		SET excerpt = LEFT(content, length);
+        SET last_occurance = CHAR_LENGTH(excerpt) - LOCATE(' ', REVERSE(excerpt));
+        SET excerpt = LEFT(excerpt, last_occurance);
+        SET excerpt = CONCAT(excerpt, suffix);
+    END IF;
+    
+	return excerpt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `get_cities_in_area` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_cities_in_area`(city_id INT, distance SMALLINT UNSIGNED) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_bin
+    READS SQL DATA
+    COMMENT 'Get ids of cities in given distance (meters) of particular city'
+BEGIN
+	Declare city_center POINT;
+    Declare cities_ids TEXT;
+	Declare EXIT HANDLER FOR NOT FOUND RETURN NULL;
+    
+    SELECT center INTO city_center
+		FROM city
+		WHERE id_city = city_id;
+    
+    SELECT GROUP_CONCAT(id_city) INTO cities_ids
+		FROM city
+        WHERE ST_distance_sphere(center, city_center) <= distance;
+	
+    return cities_ids;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50001 DROP TABLE IF EXISTS `annual_income`*/;
+/*!50001 DROP VIEW IF EXISTS `annual_income`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `annual_income` AS select year(`o`.`created_datetime`) AS `date`,sum(`e`.`ticket_price`) AS `income`,count(`o`.`id_order`) AS `orders_count` from (`order` `o` join `event` `e` on(`o`.`id_event` = `e`.`id_event`)) group by year(`o`.`created_datetime`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP TABLE IF EXISTS `daily_income`*/;
+/*!50001 DROP VIEW IF EXISTS `daily_income`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `daily_income` AS select cast(`o`.`created_datetime` as date) AS `date`,sum(`e`.`ticket_price`) AS `income`,count(`o`.`id_order`) AS `orders_count` from (`order` `o` join `event` `e` on(`o`.`id_event` = `e`.`id_event`)) group by cast(`o`.`created_datetime` as date) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP TABLE IF EXISTS `events_list`*/;
+/*!50001 DROP VIEW IF EXISTS `events_list`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `events_list` AS select `e`.`id_event` AS `id_event`,`e`.`name` AS `name`,`generate_excerpt`(`e`.`description`,150,'...') AS `excerpt`,(select `m`.`url` from (`event_medium` `em` join `medium` `m` on(`em`.`id_medium` = `m`.`id_medium`)) where `em`.`id_event` = `e`.`id_event` and `m`.`type` = 'IMAGE' order by `em`.`id_medium` limit 1) AS `image`,`e`.`tags` AS `tags`,`c`.`name` AS `category_name`,`e`.`start_datetime` AS `start_datetime`,`e`.`ticket_price` AS `ticket_price`,`e`.`ticket_count` AS `ticket_count`,`ci`.`name` AS `city_name`,`e`.`likes_count` AS `likes_count`,`e`.`is_adult_only` AS `is_adult_only`,`e`.`created_datetime` AS `created_datetime` from ((`event` `e` join `category` `c` on(`e`.`id_category` = `c`.`id_category`)) join `city` `ci` on(`e`.`id_city` = `ci`.`id_city`)) where `e`.`is_draft` = 0 and `e`.`start_datetime` > current_timestamp() */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP TABLE IF EXISTS `monthly_income`*/;
+/*!50001 DROP VIEW IF EXISTS `monthly_income`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `monthly_income` AS select date_format(`o`.`created_datetime`,'%Y-%m') AS `date`,sum(`e`.`ticket_price`) AS `income`,count(`o`.`id_order`) AS `orders_count` from (`order` `o` join `event` `e` on(`o`.`id_event` = `e`.`id_event`)) group by date_format(`o`.`created_datetime`,'%Y-%m') */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP TABLE IF EXISTS `orders_count_by_category`*/;
+/*!50001 DROP VIEW IF EXISTS `orders_count_by_category`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `orders_count_by_category` AS select `e`.`id_category` AS `id_category`,max(`c`.`name`) AS `category_name`,count(`o`.`id_order`) AS `orders_count` from ((`order` `o` join `event` `e` on(`o`.`id_event` = `e`.`id_event`)) join `category` `c` on(`e`.`id_category` = `c`.`id_category`)) group by `e`.`id_category` with rollup */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP TABLE IF EXISTS `orders_list`*/;
+/*!50001 DROP VIEW IF EXISTS `orders_list`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `orders_list` AS select `o`.`id_user` AS `id_user`,`u`.`email` AS `email`,`u`.`name` AS `user_name`,`u`.`surname` AS `surname`,`o`.`id_event` AS `id_event`,`e`.`name` AS `event_name`,`e`.`ticket_price` AS `ticket_price`,`o`.`id_order` AS `id_order`,`o`.`created_datetime` AS `created_datetime` from ((`order` `o` join `user` `u` on(`o`.`id_user` = `u`.`id_user`)) join `event` `e` on(`o`.`id_event` = `e`.`id_event`)) order by `o`.`created_datetime` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+INSERT INTO `migrations` VALUES (1,'2019_12_14_000001_create_personal_access_tokens_table',1);
+
+START TRANSACTION;
+USE `ticketi`;
+INSERT INTO `ticketi`.`User` ( `email`, `password`, `name`, `surname`, `birthdate`, `is_active`, `role`, `created_datetime`) VALUES ('admin@ticketi.pl', 'zaq1@WSX', 'admin', 'admin', '1970-01-01', 1, 'MODERATOR', '1970-01-01');
+
+COMMIT;
+
+START TRANSACTION;
+USE `ticketi`;
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Charity');
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Conference');
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Exhibition');
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Music');
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Sport');
+INSERT INTO `ticketi`.`Category` (`name`) VALUES ('Theatre');
+
+COMMIT;
