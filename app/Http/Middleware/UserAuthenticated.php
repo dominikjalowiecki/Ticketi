@@ -25,8 +25,12 @@ class UserAuthenticated
                 // If user is a USER proceed with request
                 return $next($request);
             } else if ($user->hasRole('MODERATOR')) {
-                // If user is not a USER redirect to moderator dashboard
-                return redirect(route('moderator-dashboard'))->with('info', 'Insufficient permissions...');
+                if ($request->expectsJson()) {
+                    return response('', 403);
+                } else {
+                    // If user is not a USER redirect to moderator dashboard
+                    return redirect(route('moderator-dashboard'))->with('info', 'Insufficient permissions...');
+                }
             }
         }
 

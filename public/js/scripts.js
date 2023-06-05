@@ -35,7 +35,7 @@ const myDefaultAllowList = {
     tfoot: [],
     th: [],
     tr: [],
-    td: [],
+    td: ["colspan"],
 };
 
 const popoverElement = document.querySelector("#cart-popover");
@@ -80,8 +80,15 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 // ==================
 // Converting time from UTC to local time
-const timeComponents = document.querySelectorAll(".time-component");
-for (const timeComponent of timeComponents) {
-    const date = new Date(timeComponent.textContent);
-    timeComponent.textContent = date.toLocaleString();
+function convertUTCToLocal() {
+    const timeComponents = document.querySelectorAll(".time-component");
+    for (const timeComponent of timeComponents) {
+        if (timeComponent.classList.contains("converted")) return;
+
+        const date = new Date(timeComponent.textContent);
+        timeComponent.textContent = date.toLocaleString();
+        timeComponent.classList.add("converted");
+    }
 }
+
+convertUTCToLocal();

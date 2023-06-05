@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,5 +36,8 @@ class AppServiceProvider extends ServiceProvider
                 ? $rule->uncompromised()
                 : $rule;
         });
+
+        Paginator::useBootstrap();
+        Paginator::defaultView('shared.pagination');
     }
 }

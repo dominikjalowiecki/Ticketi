@@ -12,7 +12,7 @@
         <a href="{{ route('home') }}">Events</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        {{ $event->name }}
+        <a id="eventLink" class="link-secondary text-decoration-none" href="{{ route('event.page', [$event->url]) }}">{{ $event->name }}</a>
     </li>
     </ol>
 </nav>
@@ -25,24 +25,23 @@
     data-bs-ride="carousel"
     >
     <div class="carousel-inner">
+        @if (count($images) > 0)
+        @foreach ($images as $key => $image)
+        <div class="carousel-item {{ ($key === 0) ? 'active' : '' }}">
+        <img
+            src="{{ $image->url }}"
+            class="d-block w-100"
+        />
+        </div>
+        @endforeach
+        @else
         <div class="carousel-item active">
         <img
             src="{{ asset('/img/event-placeholder.webp') }}"
             class="d-block w-100"
         />
         </div>
-        <div class="carousel-item">
-        <img
-            src="{{ asset('/img/event-placeholder.webp') }}"
-            class="d-block w-100"
-        />
-        </div>
-        <div class="carousel-item">
-        <img
-            src="{{ asset('/img/event-placeholder.webp') }}"
-            class="d-block w-100"
-        />
-        </div>
+        @endif
     </div>
     <button
         class="carousel-control-prev"
@@ -76,35 +75,48 @@
         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger likes-count"
     >
         <i class="bi bi-hand-thumbs-up-fill"></i><br />
-        99
-        <span class="visually-hidden">unread messages</span>
+        <span id="likesCount">{{ $event->likes_count }}</span>
+        <span class="visually-hidden">likes</span>
     </span>
     <div class="row h-100 g-0">
         <div class="col d-flex flex-column">
         <div class="card-body p-0">
             <h5 class="card-title mt-3 mt-md-0 mb-3">
-            Blog post title
+            {{ $event->name }}
             </h5>
             <div
             class="badge bg-primary bg-gradient rounded-pill mb-2"
             >
-            News
+            {{ $event->category_name }}
             </div>
+            @if (!$event->is_adult_only)
             <div
+            
             class="badge bg-success bg-gradient rounded-pill mb-2"
             >
             Child allowed
             </div>
-            <h4 class="card-text fw-bold my-1">170.00&euro;</h4>
-            <span class="badge bg-secondary">Ticket count: 203</span>
+            @endif
+            <h4 class="card-text fw-bold my-1">{{ $event->ticket_price }}&euro;</h4>
+            @if ($event->ticket_count > 0)
+            <span class="badge bg-secondary">Ticket count: {{ $event->ticket_count }}</span>
+            @else
             <span class="badge bg-secondary">Sold out!</span>
+            @endif
             <div class="mt-4">
-            <a href="cart.html" class="btn btn-primary disabled"
-                >Add to cart</a
-            >
-            <a href="admin-edit-event.html" class="btn btn-danger"
-                >Edit event</a
-            >
+            @if (!Auth::user() || Auth::user()->hasRole('USER'))
+            <form method="POST" action="{{ route('cart.show')}}">
+                @csrf
+                <input type="hidden" name="idEvent" value="{{ $event->id_event }}">
+                <button type="submit" class="btn btn-primary {{ ($event->ticket_count <= 0) ? 'disabled' : '' }}"
+                    >Add to cart</button
+                >
+            </form>
+            @elseif (Auth::user()->hasRole('MODERATOR'))
+                <a href="admin-edit-event.html" class="btn btn-danger"
+                    >Edit event</a
+                >
+            @endif
             </div>
         </div>
         <div class="card-footer p-0 bg-transparent border-top-0">
@@ -118,36 +130,52 @@
                 <div class="fw-bold">
                     Starting
                     <span class="time-component"
-                    >2023-05-5 5:29:44 UTC</span
+                    >{{ $event->start_datetime }} UTC</span
                     >
                 </div>
                 <div class="text-muted">
                     Uploaded
                     <span class="time-component"
-                    >2023-05-15 23:29:44 UTC</span
+                    >{{ $event->created_datetime }} UTC</span
                     >
                 </div>
                 </div>
                 <div>
-                <button
-                    class="btn btn-primary add-favourite-btn"
-                    data-event-id="3"
-                    aria-label="Add or remove from favourites"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Add to favourite"
-                >
-                    <i class="bi bi-star-fill"></i>
-                </button>
-                <button
-                    class="btn btn-outline-primary like-comment-btn"
-                    aria-label="Like comment"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Like event"
-                >
-                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                </button>
+                @auth
+                @if (Auth::user()->hasRole('USER'))
+                <form id="followEventForm" method="POST" class="d-inline" action="{{ route('event.follow') }}" onsubmit="return false;">
+                    @csrf
+                    <input type="hidden" name="idEvent" value="{{ $event->id_event }}">
+                    <button
+                        type="submit"
+                        id="followEventButton"
+                        class="btn btn-primary add-favourite-btn"
+                        aria-label="Add or remove from favourites"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Add to favourite"
+                    >
+                        <i class="bi {{ $is_followed ? 'bi-star-fill' : 'bi-star' }}"></i>
+                    </button>
+                </form>
+                @endif
+                @endauth
+                @if (!Auth::user() || Auth::user()->hasRole('USER'))
+                <form id="likeEventForm" method="POST" class="d-inline" action="{{ route('event.like') }}" onsubmit="return false;">
+                    @csrf
+                    <input type="hidden" name="idEvent" value="{{ $event->id_event }}">
+                    <button
+                        type="submit"
+                        id="likeEventButton"
+                        class="btn btn-outline-primary like-comment-btn"
+                        aria-label="Like comment"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Like event"
+                    >
+                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                    </button>
+                </form>
                 <button
                     class="btn btn-warning"
                     aria-label="Like comment"
@@ -157,6 +185,7 @@
                 >
                     <i class="bi bi-calendar-fill"></i>
                 </button>
+                @endif
                 </div>
             </div>
             </div>
@@ -171,29 +200,19 @@
     <h3 class="mb-3">Description</h3>
 </div>
 <div class="col-md-7">
-    <p>Hello World!</p>
-    <p>Some initial <strong>bold</strong> text</p>
-    <ol>
-    <li>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. In,
-        totam!
-    </li>
-    <li>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea
-        tenetur quae expedita esse!
-    </li>
-    <li>Lorem ipsum dolor sit amet consectetur adipisicing.</li>
-    </ol>
+    {!! $event->description !!}
 </div>
 <div class="col-md-5 mt-3 mt-md-0 d-flex align-items-center">
-    <!-- <div class="embed-responsive embed-responsive-16by9">
+    @if ($video)
+    <div class="ratio ratio-16x9">
         <iframe
-        class="embed-responsive-item"
-        src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+        src="{{ $video->url }}"
         allowfullscreen
         ></iframe>
-    </div> -->
+    </div>
+    @else
     <img src="{{ asset('/img/event-placeholder.webp') }}" class="img-fluid" />
+    @endif
 </div>
 </div>
 <div class="row my-5">
@@ -205,7 +224,7 @@
     loading="lazy"
     allowfullscreen
     referrerpolicy="no-referrer-when-downgrade"
-    src="https://www.google.com/maps/embed/v1/place?key={{ config('ticketi.maps') }}&q=Sosnowiec,Będzińska+39"
+    src="https://www.google.com/maps/embed/v1/place?key={{ config('ticketi.embedMaps') }}&q={{ $event->city_name }},{{ $event->street }}"
     >
     </iframe>
 </div>
@@ -213,10 +232,14 @@
 <hr class="mb-5" />
 <div class="row">
 <div class="col">
+    @auth
+    @if (Auth::user()->hasRole('USER'))
     <div class="mb-4">
-    <form id="commentForm" method="POST">
+    <form id="commentForm" class="needs-validation"  method="POST" action="{{ route('event.addComment') }}" onsubmit="return false;" novalidate>
+        @csrf
+        <input type="hidden" name="idEvent" value="{{ $event->id_event }}">
         <div class="mb-3">
-        <label for="exampleFormControlTextarea1" class="form-label"
+        <label for="commentTextarea" class="form-label"
             >Comment content</label
         >
         <textarea
@@ -235,7 +258,8 @@
         </button>
     </form>
     </div>
-    <!-- Comments Show More button lazy loading / eager load / animation fade in out-->
+    @endif
+    @endauth
     <div class="progress mb-3">
     <div
         class="progress-bar progress-bar-striped progress-bar-animated bg-danger w-75"
@@ -244,53 +268,10 @@
         aria-valuemin="0"
         aria-valuemax="100"
     ></div>
+    @csrf
     </div>
     <div id="commentsContainer">
-    <div class="card feature-card">
-        <div class="card-body">
-        <h5 class="card-title">Charles Adas</h5>
-        <p class="card-text">
-            With supporting text below as a natural lead-in to
-            additional content.
-        </p>
-        </div>
-        <div class="card-footer bg-transparent border-top-0">
-        <div
-            class="d-flex align-items-end justify-content-between w-100"
-        >
-            <div class="text-muted">
-            Created
-            <span class="time-component"
-                >2023-05-5 5:29:44 UTC</span
-            >
-            ·
-            <span class="badge bg-primary"
-                ><span class="likes-counter">251</span>
-                <i class="bi bi-hand-thumbs-up-fill"></i
-            ></span>
-            </div>
-            <div>
-            <button
-                class="btn btn-outline-primary like-comment-btn"
-                aria-label="Like comment"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Like comment"
-            >
-                <i class="bi bi-hand-thumbs-up-fill"></i>
-            </button>
-            <button
-                class="btn-close btn-warning remove-comment-btn"
-                value="3"
-                aria-label="Remove comment"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Remove comment"
-            ></button>
-            </div>
-        </div>
-        </div>
-    </div>
+        @include('shared.comments')
     </div>
 </div>
 </div>
@@ -303,7 +284,7 @@
 </div>
 <div class="row text-center mt-3">
 <div class="col">
-    <button id="loadCommentsBtn" class="btn btn-danger">
+    <button id="loadCommentsBtn" data-id-event="{{ $event->id_event }}" data-action="{{ route('event.getComments') }}" class="btn btn-danger">
     Show more comments
     </button>
 </div>

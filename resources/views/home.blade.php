@@ -30,6 +30,7 @@
 @section('content')
 <div class="container px-5 mb-5">
     @include('shared.alerts')
+    @if (!$popular_events->isEmpty())
     <div class="row">
         <div class="col">
             <div class="container px-5">
@@ -47,11 +48,11 @@
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger likes-count">
                                 <i class="bi bi-hand-thumbs-up-fill"></i><br />
                                 {{ $event->likes_count }}
-                                <span class="visually-hidden">unread messages</span>
+                                <span class="visually-hidden">likes</span>
                             </span>
-                            <img class="card-img-top" src="{{ $event->image ? $event->image : 'https://dummyimage.com/600x350/ced4da/6c757d' }}" />
+                            <img class="card-img-top event-card-image" src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}" />
                             <div class="card-body p-4">
-                                <a class="text-decoration-none link-dark stretched-link" href="{{ route('event', ['idString' => '-' . $event->id_event]) }}">
+                                <a class="text-decoration-none link-dark stretched-link" href="{{ route('event.page', [$event->url]) }}">
                                     <h5 class="card-title mb-3">{{ $event->name }}</h5>
                                 </a>
                                 <p class="card-text">
@@ -72,11 +73,11 @@
                                     <div class="d-flex align-items-end">
                                         <div class="small">
                                             <div class="fw-bold">
-                                                <span class="time-component">{{ $event->start_datetime }} UTC</span>
+                                                Starting <span class="time-component">{{ $event->start_datetime }} UTC</span>
                                                 · {{ $event->city_name }}
                                             </div>
                                             <div class="text-muted">
-                                                <span class="time-component">{{ $event->created_datetime }} UTC</span>
+                                                Uploaded <span class="time-component">{{ $event->created_datetime }} UTC</span>
                                             </div>
                                         </div>
                                     </div>
@@ -89,5 +90,6 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 @endsection

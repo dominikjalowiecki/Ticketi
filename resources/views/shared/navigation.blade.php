@@ -40,10 +40,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-info btn-sm me-2 text-dark position-relative {{ Route::is('home') ? 'active' : '' }}" {{ Route::is('home') ? 'aria-current=page' : '' }} href="{{ route('home') }}"><i class="bi bi-star-fill me-1"></i>Favourite
-                                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                                    <span class="visually-hidden">New alerts</span>
-                                </span></a>
+                            <a class="nav-link btn btn-primary btn-sm me-2 position-relative {{ Route::is('followed') ? 'active' : '' }}" {{ Route::is('followed') ? 'aria-current=page' : '' }} href="{{ route('followed') }}"><i class="bi bi-star-fill me-1"></i>Followed</a>
                         </li>
                     @elseif (Auth::user()->hasRole('MODERATOR'))
                         <li class="nav-item dropdown">
@@ -79,9 +76,9 @@
                 @endauth
                 @if (!Auth::user() || !Auth::user()->hasRole('MODERATOR'))
                     <li class="nav-item">
-                        <a id="cart-popover" class="nav-link" href="cart.html"><i class="bi bi-basket3-fill me-1"></i>Cart
-                            <span id="cart-items-count" class="badge rounded-pill bg-info text-dark">3</span>
-                            <span id="cart-total">135.50&euro;</span>
+                        <a id="cart-popover" class="nav-link {{ Route::is('cart.show') ? 'active' : '' }}" {{ Route::is('cart.show') ? 'aria-current=page' : '' }} href="{{ route('cart.show') }}"><i class="bi bi-basket3-fill me-1"></i>Cart
+                            <span id="cart-items-count" class="badge rounded-pill bg-primary">{{ get_cart_items_count() }}</span>
+                            <span id="cart-total">{{ number_format(get_cart_total(), 2, '.', ',') }}&euro;</span>
                         </a>
                     </li>
                 @endif
@@ -91,9 +88,6 @@
 </nav>
 @if (!Auth::user() || !Auth::user()->hasRole('MODERATOR'))
 <div id="cart-popover-content">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -102,21 +96,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Event 1</td>
-                <td>100.00&euro;</td>
-            </tr>
-            <tr>
-                <td>Event 2</td>
-                <td>80.00&euro;</td>
-            </tr>
+            @if (count($cartItems = Session::get('cart_items', [])) > 0)
+                @foreach (Session::get('cart_items', []) as $item)
+                    <tr>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['price'] }}&euro;</td>
+                    </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="2" class="text-center">Empty...</td>
+                </tr>
+            @endif
         </tbody>
-        <tfoot>
-            <tr>
-                <td>Sum</td>
-                <td>180.00&euro;</td>
-            </tr>
-        </tfoot>
     </table>
 </div>
 @endif

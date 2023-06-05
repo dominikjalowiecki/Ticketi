@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ModeratorAuthenticated
+class GuestOrUserAuthenticated
 {
     /**
      * Handle an incoming request.
@@ -21,20 +21,19 @@ class ModeratorAuthenticated
             /** @var User $user */
             $user = Auth::user();
 
-            if ($user->hasRole('MODERATOR')) {
-                // If user is a MODERATOR proceed with request
+            if ($user->hasRole('USER')) {
+                // If user is a USER proceed with request
                 return $next($request);
-            } else if ($user->hasRole('USER')) {
-                if ($request->expectsJson()) {
+            } else if ($user->hasRole('MODERATOR')) {
+                if (request()->expectsJson()) {
                     return response('', 403);
                 } else {
-                    // If user is not a MODERATOR redirect to dashboard
-                    return redirect(route('user-profile'))->with('info', 'Insufficient permissions...');
+                    // If user is not a USER redirect to dashboard
+                    return redirect(route('moderator-dashboard'))->with('info', 'Insufficient permissions...');
                 }
             }
         }
 
-        // Permission denied
-        abort(403);
+        return $next($request);
     }
 }
