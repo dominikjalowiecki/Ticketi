@@ -1,4 +1,4 @@
-import { ALERT_TYPE, appendAlertMessage } from "./helper.js";
+import { ALERT_TYPE, appendAlertMessage, convertUTCToLocal } from "./helper.js";
 import {
     ajaxPostForm,
     ajaxPostFormCustom,
@@ -87,53 +87,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadCommentsButton = document.querySelector("#loadCommentsBtn");
     const commentsSpinner = document.querySelector("#commentsSpinner");
     let page = 2;
-    loadCommentsButton.addEventListener("click", function (e) {
-        const target = e.target;
-        target.disabled = true;
-        commentsSpinner.classList.remove("d-none");
+    if (!!loadCommentsButton) {
+        loadCommentsButton.addEventListener("click", function (e) {
+            const target = e.target;
+            target.disabled = true;
+            commentsSpinner.classList.remove("d-none");
 
-        const idEvent = loadCommentsButton.dataset.idEvent;
-        const action = loadCommentsButton.dataset.action;
+            const idEvent = loadCommentsButton.dataset.idEvent;
+            const action = loadCommentsButton.dataset.action;
 
-        const formData = new FormData();
-        formData.append("idEvent", idEvent);
+            const formData = new FormData();
+            formData.append("idEvent", idEvent);
 
-        fetch(
-            action +
-                "?" +
-                new URLSearchParams({
-                    idEvent: idEvent,
-                    page: page,
+            fetch(
+                action +
+                    "?" +
+                    new URLSearchParams({
+                        idEvent: idEvent,
+                        page: page,
+                    })
+            )
+                .then(async (response) => {
+                    commentsSpinner.classList.add("d-none");
+                    target.disabled = false;
+
+                    if (!response.ok) throw new Error("Something went wrong");
+
+                    ++page;
+                    const text = await response.text();
+                    if (text == "") {
+                        target.remove();
+                        return;
+                    }
+                    const el = document.createElement("div");
+                    el.classList.add("ajax-append");
+                    el.innerHTML = text;
+
+                    commentsContainer.appendChild(el);
+
+                    convertUTCToLocal();
+
+                    setTimeout(() => {
+                        el.classList.add("entered");
+                    }, 500);
                 })
-        )
-            .then(async (response) => {
-                commentsSpinner.classList.add("d-none");
-                target.disabled = false;
-
-                if (!response.ok) throw new Error("Something went wrong");
-
-                ++page;
-                const text = await response.text();
-                if (text == "") {
-                    target.remove();
-                    return;
-                }
-                const el = document.createElement("div");
-                el.classList.add("ajax-append");
-                el.innerHTML = text;
-
-                commentsContainer.appendChild(el);
-
-                convertUTCToLocal();
-
-                setTimeout(() => {
-                    el.classList.add("entered");
-                }, 500);
-            })
-            .catch((error) => {
-                appendAlertMessage(error.message, ALERT_TYPE.danger);
-            });
-    });
+                .catch((error) => {
+                    appendAlertMessage(error.message, ALERT_TYPE.danger);
+                });
+        });
+    }
 
     // Handle follow event button
     const followEventForm = document.querySelector("#followEventForm");

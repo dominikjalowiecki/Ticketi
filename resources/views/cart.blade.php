@@ -23,7 +23,7 @@
             <tbody>
               @foreach ($items as $item)
                 <tr>
-                  <th scope="row">1</th>
+                  <th scope="row">{{ $item->id_event }}</th>
                   <td><a href="{{ route('event.page', [$item->url]) }}">{{ $item->name }}</a></td>
                   <td>{{ number_format($item->ticket_price, 2, '.', ',') }}&euro;</td>
                   <td>

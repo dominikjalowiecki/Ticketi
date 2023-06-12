@@ -10,7 +10,7 @@
                 @php
                     $navigation = [
                         'Home' => 'home',
-                        'Events' => 'home',
+                        'Events' => 'events',
                         'FAQ' => 'faq',
                     ];
                 @endphp
@@ -44,10 +44,10 @@
                         </li>
                     @elseif (Auth::user()->hasRole('MODERATOR'))
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{ Route::is('home') ? 'active' : '' }}" id="navbarDropdownAdmin" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration panel</a>
+                            <a class="nav-link dropdown-toggle {{ Route::is('admin.dashboard') ? 'active' : '' }}" id="navbarDropdownAdmin" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration panel</a>
                             <ul class="dropdown-menu dropdown-menu-end mb-3" aria-labelledby="navbarDropdownAdmin">
                                 <li>
-                                    <a class="dropdown-item {{ Route::is('home') ? 'active' : '' }}" {{ Route::is('home') ? 'aria-current=page' : '' }} href="">Go to administration panel</a>
+                                    <a class="dropdown-item {{ Route::is('admin.dashboard') ? 'active' : '' }}" {{ Route::is('admin.dashboard') ? 'aria-current=page' : '' }} href="{{ route('admin.dashboard') }}">Go to administration panel</a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider" />

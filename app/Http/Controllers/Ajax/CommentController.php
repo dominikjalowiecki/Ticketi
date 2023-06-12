@@ -35,13 +35,6 @@ class CommentController extends Controller
             ->select('comment.*', 'user.name as user_name', 'user.surname as user_surname')
             ->simplePaginate(config('ticketi.pagination'));
 
-        // Render comments ajax pagination
-        // if ($request->ajax()) {
-        //     $view = view('data', compact('posts'))->render();
-
-        //     return response()->json(['html' => $view], 201);
-        // }
-
         return view('shared.comments', ['comments' => $comments]);
     }
 
@@ -55,7 +48,7 @@ class CommentController extends Controller
     {
         try {
             $request->validate([
-                'idEvent' => ['required', 'integer', 'gt:0'],
+                'idEvent' => ['required', 'integer', 'gt:0', 'exists:event,id_event'],
                 'comment' => ['required', 'string', 'max:200'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -104,7 +97,7 @@ class CommentController extends Controller
     {
         try {
             $request->validate([
-                'idComment' => ['required', 'integer', 'gt:0'],
+                'idComment' => ['required', 'integer', 'gt:0', 'exists:comment,id_comment'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);
@@ -146,9 +139,9 @@ class CommentController extends Controller
 
         $query = DB::table('comment')->where('id_comment', $idComment);
 
-        $commentExists = (bool)$query->count();
+        // $commentExists = (bool)$query->count();
 
-        if (!$commentExists) return response('', 400);
+        // if (!$commentExists) return response('', 400);
 
         $query->increment('likes_count');
 

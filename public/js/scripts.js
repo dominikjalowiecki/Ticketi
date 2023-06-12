@@ -1,3 +1,5 @@
+import { convertUTCToLocal } from "./helper.js";
+
 // var source = new EventSource('.php');
 // source.onmessage = function (event) {
 //   document.getElementById('result').innerHTML += event.data + '<br>';
@@ -77,18 +79,5 @@ var tooltipTriggerList = [].slice.call(
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
-
-// ==================
-// Converting time from UTC to local time
-function convertUTCToLocal() {
-    const timeComponents = document.querySelectorAll(".time-component");
-    for (const timeComponent of timeComponents) {
-        if (timeComponent.classList.contains("converted")) return;
-
-        const date = new Date(timeComponent.textContent);
-        timeComponent.textContent = date.toLocaleString();
-        timeComponent.classList.add("converted");
-    }
-}
 
 convertUTCToLocal();

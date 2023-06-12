@@ -1,0 +1,32 @@
+.bg-image {
+    background-size: 40%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#create-event-illustration {
+    background-image: url("/img/undraw-app-illustration.svg");
+    background-position-y: 250px;
+}
+
+.event-image-thumbnail {
+    width: 150px;
+}
+
+.tag-delete {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .btn-md-full-width {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .btn-lg-full-width {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}

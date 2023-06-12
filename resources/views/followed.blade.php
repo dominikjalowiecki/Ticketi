@@ -24,6 +24,7 @@
                         <img
                         src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}"
                         class="event-card-image rounded-start"
+                        loading="lazy"
                         />
                     </div>
                     <div class="col-md-8 d-flex flex-column">
@@ -72,10 +73,10 @@
                                 class="btn-close btn-warning remove-favourite-btn"
                                 data-action="{{ route('event.follow') }}"
                                 data-id-event="{{ $event->id_event }}"
-                                aria-label="Remove from favourites"
+                                aria-label="Remove from followed"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
-                                title="Remove from favourites"
+                                title="Remove from followed"
                             ></button>
                             </div>
                         </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Jobs\SendTickets;
 
 class CartController extends Controller
 {
@@ -152,6 +153,8 @@ class CartController extends Controller
             }
         }
 
+        $insertedIds = [];
+
         DB::beginTransaction();
 
         try {
@@ -176,12 +179,14 @@ class CartController extends Controller
 
                 $hash = hash('sha256', $item->id_event . 'X' . $user->id_user);
 
-                DB::table('order')->insert([
+                DB::table('order')->insertGetId([
                     'id_user' => $user->id_user,
                     'id_event' => $item->id_event,
                     'id_order' => $hash,
                     'price' => $item->ticket_price,
                 ]);
+
+                $insertedIds[] = $hash;
             }
 
             DB::commit();
@@ -190,10 +195,14 @@ class CartController extends Controller
             return abort(500, 'Something went wrong :(');
         }
 
+        SendTickets::dispatch($insertedIds)
+            ->afterCommit()
+            ->onQueue('high');
+
         // Clear session cart data
         Session::forget('cart_items');
 
-        return redirect()->to(route('user-tickets'));
+        return redirect()->to(route('user-tickets'))->with('status', 'Tickets will be send to your email soon');
     }
 
     /**

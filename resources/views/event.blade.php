@@ -31,6 +31,7 @@
         <img
             src="{{ $image->url }}"
             class="d-block w-100"
+            loading="lazy"
         />
         </div>
         @endforeach
@@ -39,6 +40,7 @@
         <img
             src="{{ asset('/img/event-placeholder.webp') }}"
             class="d-block w-100"
+            loading="lazy"
         />
         </div>
         @endif
@@ -113,7 +115,7 @@
                 >
             </form>
             @elseif (Auth::user()->hasRole('MODERATOR'))
-                <a href="admin-edit-event.html" class="btn btn-danger"
+                <a href="{{ route('admin.editEvent', [$event->id_event]) }}" class="btn btn-danger"
                     >Edit event</a
                 >
             @endif
@@ -150,10 +152,10 @@
                         type="submit"
                         id="followEventButton"
                         class="btn btn-primary add-favourite-btn"
-                        aria-label="Add or remove from favourites"
+                        aria-label="Add or remove from followed"
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        title="Add to favourite"
+                        title="Toggle followed"
                     >
                         <i class="bi {{ $is_followed ? 'bi-star-fill' : 'bi-star' }}"></i>
                     </button>
@@ -176,15 +178,6 @@
                         <i class="bi bi-hand-thumbs-up-fill"></i>
                     </button>
                 </form>
-                <button
-                    class="btn btn-warning"
-                    aria-label="Like comment"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Add to Google Calendar"
-                >
-                    <i class="bi bi-calendar-fill"></i>
-                </button>
                 @endif
                 </div>
             </div>
@@ -211,7 +204,7 @@
         ></iframe>
     </div>
     @else
-    <img src="{{ asset('/img/event-placeholder.webp') }}" class="img-fluid" />
+    <img src="{{ asset('/img/event-placeholder.webp') }}" class="img-fluid" loading="lazy" />
     @endif
 </div>
 </div>
@@ -260,21 +253,12 @@
     </div>
     @endif
     @endauth
-    <div class="progress mb-3">
-    <div
-        class="progress-bar progress-bar-striped progress-bar-animated bg-danger w-75"
-        role="progressbar"
-        aria-valuenow="75"
-        aria-valuemin="0"
-        aria-valuemax="100"
-    ></div>
-    @csrf
-    </div>
     <div id="commentsContainer">
         @include('shared.comments')
     </div>
 </div>
 </div>
+@if (count($comments) === config('ticketi.pagination'))
 <div id="commentsSpinner" class="row text-center mt-3 d-none">
 <div class="col">
     <div class="spinner-grow" role="status">
@@ -289,6 +273,7 @@
     </button>
 </div>
 </div>
+@endif
 @endsection
 
 @push('scripts')

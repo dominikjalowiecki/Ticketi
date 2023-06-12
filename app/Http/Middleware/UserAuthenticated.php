@@ -29,7 +29,7 @@ class UserAuthenticated
                     return response('', 403);
                 } else {
                     // If user is not a USER redirect to moderator dashboard
-                    return redirect(route('moderator-dashboard'))->with('info', 'Insufficient permissions...');
+                    return redirect(route('admin.dashboard'))->with('info', 'Insufficient permissions...');
                 }
             }
         }

@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
-                <img class="img-fluid rounded-3 my-5" src="{{ asset('img/event-placeholder.webp') }}" alt="Spectacular event" />
+                <img class="img-fluid rounded-3 my-5" src="{{ asset('img/event-placeholder.webp') }}" loading="lazy" alt="Spectacular event" />
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                                 {{ $event->likes_count }}
                                 <span class="visually-hidden">likes</span>
                             </span>
-                            <img class="card-img-top event-card-image" src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}" />
+                            <img class="card-img-top event-card-image" src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}" loading="lazy" />
                             <div class="card-body p-4">
                                 <a class="text-decoration-none link-dark stretched-link" href="{{ route('event.page', [$event->url]) }}">
                                     <h5 class="card-title mb-3">{{ $event->name }}</h5>

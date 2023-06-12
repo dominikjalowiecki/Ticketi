@@ -8,6 +8,7 @@
     <meta name="author" content="Dominik Jałowiecki" />
     <meta name="robots" content="noindex" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <base href="{{ config('app.url') . '/' }}">
     <title>Ticketi - @yield('title')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
@@ -21,7 +22,7 @@
     <!-- Bootstrap core JS-->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <!-- Core theme JS-->
-    <script src="{{ asset('js/scripts.js') }}"></script>
+    <script type="module" src="{{ asset('js/scripts.js') }}"></script>
     @endprepend
     @stack('scripts')
 </body>

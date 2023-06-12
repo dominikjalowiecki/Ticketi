@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
                 /** @var User @user */
                 $user = Auth::guard($guard)->user();
 
-                if ($user->hasRole('MODERATOR')) return redirect(route('moderator-dashboard'));
+                if ($user->hasRole('MODERATOR')) return redirect(route('admin.dashboard'));
                 else if ($user->hasRole('USER')) return redirect(route('user-profile'));
             }
         }

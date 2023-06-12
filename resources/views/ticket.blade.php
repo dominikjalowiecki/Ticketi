@@ -50,7 +50,7 @@
 <footer class="py-4 mt-auto">
 <div class="container text-center">
     <div class="row">
-    <p>Dominik Jałowiecki &copy; 2023</p>
+    <p>Dominik Jalowiecki &copy; 2023</p>
     </div>
 </div>
 </footer>

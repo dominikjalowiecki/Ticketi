@@ -22,7 +22,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'surname',
         'email',
         'birthdate',
+        'role',
         'password',
+        'email_verified_at',
     ];
 
     /**
@@ -65,6 +67,11 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var bool
      */
     public $timestamps = false;
+
+    public function name(): string
+    {
+        return $this->name . ' ' . $this->surname;
+    }
 
     public function hasRole(string $role): bool
     {

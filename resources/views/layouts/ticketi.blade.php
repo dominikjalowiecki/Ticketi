@@ -21,7 +21,7 @@
                     Created with
                     <a class="text-light" href="https://getbootstrap.com/" rel="nofollow">Bootstrap 5</a>
                     <br />
-                    Dominik Jałowiecki &copy; 2023
+                    Dominik Jalowiecki &copy; 2023
                 </p>
                 <div class="d-flex justify-content-center">
                     <a href="https://github.com/dominikjalowiecki" class="mx-2" rel="nofollow"><i class="bi bi-github me-1"></i>GitHub</a>

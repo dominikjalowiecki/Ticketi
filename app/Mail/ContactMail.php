@@ -6,19 +6,34 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
 
 class ContactMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     /**
+     * The user instance.
+     *
+     * @var \App\Models\User
+     */
+    public $user;
+
+    public $subject;
+    public $content;
+
+    /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(integer $idOrder)
+    public function __construct(User $user, string $subject, string $content)
     {
-        $this->idOrder = $idOrder;
+        $this->user = $user;
+        $this->subject = $subject;
+        $this->content = $content;
+
+        $this->replyTo($this->user->email);
     }
 
     /**
@@ -28,27 +43,8 @@ class ContactMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        // <div>
-        //     Price: {{ $order->price }}
-        // </div>
-        // return $this
-        //     ->from(config('mail.from.address'), 'Contact Form Ticketi')
-        //     ->view('emails.contact')
-        //     ->subject('Test 123')
-        //     ->with([
-        //         'orderName' => $this->order->name,
-        //         'orderPrice' => $this->order->price,
-        //     ])
-        //     ->attach('/path/to/file', [
-        //         'as' => 'name.pdf',
-        //         'mime' => 'application/pdf',
-        //     ])
-        //     ->text('emails.contact_plain');
-
-        // Mail::send('emails.welcome', $data, function ($message) {
-        //     $message->to('foo@example.com', 'John Smith')
-        //         ->replyTo('reply@example.com', 'Reply Guy')
-        //         ->subject('Welcome!');
-        // });
+        return $this
+            ->markdown('emails.contact')
+            ->subject('Ticketi | ' . $this->subject . ' - ' . $this->user->name());
     }
 }

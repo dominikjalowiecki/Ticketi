@@ -4,12 +4,107 @@ namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Input;
+
+use Illuminate\Support\Facades\Log;
+
 
 class EventController extends Controller
 {
+    /**
+     * Show events page.
+     *
+     * @param  Request $request
+     * @return \Illuminate\View\View
+     */
+    public function list(Request $request)
+    {
+        $request->validate([
+            'search' => ['string', 'max:50', 'nullable'],
+            'category' => ['string', 'max:45', 'nullable'],
+            'city' => ['string', 'max:45', 'nullable'],
+        ]);
+
+        $query = DB::table('events_list');
+
+        if (Auth::check()) {
+            $user = $request->user();
+
+            $followedItems = DB::table('follow')
+                ->where('id_user', $user->id_user);
+
+            $query = $query
+                ->leftJoinSub($followedItems, 'followed_items', function (JoinClause $join) {
+                    $join->on('events_list.id_event', '=', 'followed_items.id_event');
+                })
+                ->select('events_list.*', 'followed_items.created_datetime as is_followed');
+        }
+
+        $search = $request->search;
+        if ($search !== null) {
+            $query = $query
+                ->whereRaw(DB::raw("MATCH (events_list.name, events_list.description, events_list.tags) AGAINST ('$search' IN NATURAL LANGUAGE MODE)"));
+        }
+
+        $category = $request->category;
+        if ($category !== null) {
+            $query = $query
+                ->where('events_list.category_name', $category);
+        }
+
+        $city = $request->city;
+        if ($city !== null) {
+            $query = $query
+                ->whereRaw(DB::raw("events_list.id_city IN (get_cities_in_area('$city', 1000))"));
+        }
+
+        $underage = $request->underage;
+        if ($underage !== null) {
+            $query = $query
+                ->where('events_list.is_adult_only', false);
+        }
+
+        $sort = $request->sort;
+        switch ($sort) {
+            case 'Lowest price':
+                $query->orderBy('ticket_price', 'asc');
+                break;
+            case 'Highest price':
+                $query->orderBy('ticket_price', 'desc');
+                break;
+            case 'Most likes':
+                $query->orderBy('likes_count', 'desc');
+                break;
+            case 'Starting soon':
+                $query->orderBy('start_datetime', 'desc');
+                break;
+            case 'Newest':
+            default:
+                $query->orderBy('created_datetime', 'desc');
+                break;
+        }
+
+        $events = $query
+            ->paginate(config('ticketi.pagination'));
+
+        $events->appends($request->except('page'));
+
+        $categories = Cache::remember('categories', 60 * 60, function () {
+            return DB::table('category')->get();
+        });
+
+        $cities = Cache::remember('cities', 60 * 60, function () {
+            return DB::table('city')->get();
+        });
+
+        return view('events', ['events' => $events, 'categories' => $categories, 'cities' => $cities]);
+    }
+
     /**
      * Show event page.
      *
@@ -31,7 +126,7 @@ class EventController extends Controller
             ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
             ->get();
 
-        if ($event->isEmpty() || $event->first()->is_draft) return abort(404);
+        if ($event->isEmpty()) return abort(404);
 
         $comments = DB::table('comment')
             ->join('user', 'comment.id_user', '=', 'user.id_user')
@@ -66,7 +161,16 @@ class EventController extends Controller
             $is_followed = !$follow->isEmpty();
         }
 
-        return view('event', ['event' => $event->first(), 'is_followed' => $is_followed, 'images' => $images, 'video' => $video, 'comments' => $comments]);
+        $event = $event->first();
+
+        $event->description = htmlspecialchars($event->description, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $allowed_tags = ['p', 'ul', 'ol', 'li', 'strong', 'em', 'blockquote', 'pre'];
+        foreach ($allowed_tags as $tag) {
+            $event->description = str_replace("&lt;$tag&gt;", "<$tag>", $event->description);
+            $event->description = str_replace("&lt;/$tag&gt;", "</$tag>", $event->description);
+        }
+
+        return view('event', ['event' => $event, 'is_followed' => $is_followed, 'images' => $images, 'video' => $video, 'comments' => $comments]);
     }
 
     /**
@@ -79,7 +183,7 @@ class EventController extends Controller
     {
         try {
             $request->validate([
-                'idEvent' => ['required', 'integer', 'gt:0'],
+                'idEvent' => ['required', 'integer', 'gt:0', 'exists:event,id_event'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);
@@ -96,9 +200,9 @@ class EventController extends Controller
 
         $query = DB::table('event')->where('id_event', $idEvent);
 
-        $eventExists = (bool)$query->count();
+        // $eventExists = (bool)$query->count();
 
-        if (!$eventExists) return response('', 400);
+        // if (!$eventExists) return response('', 400);
 
         // return response('hello', 200)->header('Content-Type', 'text/plain', 'Accept: 'application/json');
         // return response()->json(['hello' => $value], 201); 

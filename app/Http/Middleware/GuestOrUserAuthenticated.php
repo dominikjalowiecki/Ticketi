@@ -29,11 +29,12 @@ class GuestOrUserAuthenticated
                     return response('', 403);
                 } else {
                     // If user is not a USER redirect to dashboard
-                    return redirect(route('moderator-dashboard'))->with('info', 'Insufficient permissions...');
+                    return redirect(route('admin.dashboard'))->with('info', 'Insufficient permissions...');
                 }
             }
         }
 
+        // If user is a GUEST proceed with request
         return $next($request);
     }
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\Page\EventController;
 use App\Http\Controllers\Page\CartController;
 use App\Http\Controllers\Ajax\CommentController;
 use App\Http\Controllers\Page\TicketController;
+use App\Http\Controllers\Page\AdministrationPanelController;
+use App\Http\Controllers\Ajax\StatsController;
 
 // use Illuminate\Support\Facades\DB;
 
@@ -32,8 +34,8 @@ Route::middleware(['throttle:global'])->group(function () {
     Route::get('/faq', [FaqController::class, 'show'])
         ->name('faq');
 
-    // Route::get('/events', [])
-    //     ->name('events');
+    Route::get('/events', [EventController::class, 'list'])
+        ->name('events');
 
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::middleware(['guestOrUser'])->group(function () {
@@ -92,7 +94,7 @@ Route::middleware(['throttle:global'])->group(function () {
         ->middleware(['signed'])
         ->name('ticket');
 
-    Route::prefix('user-profile')->middleware(['auth', 'user', 'verified', 'password.confirm'])->group(function () {
+    Route::prefix('user-profile')->middleware(['auth', 'user', 'verified'])->group(function () {
         Route::get('/', [UserProfileController::class, 'dashboard'])
             ->name('user-profile');
 
@@ -105,35 +107,57 @@ Route::middleware(['throttle:global'])->group(function () {
         Route::post('/contact-form', [UserProfileController::class, 'sendContactMail']);
     });
 
-
     Route::get('/followed', [UserProfileController::class, 'followed'])
         ->middleware(['auth', 'user'])
         ->name('followed');
 
 
 
-    Route::get('/moderator-dashboard', function () {
-        return view('dashboard');
-    })->middleware(['auth', 'moderator', 'verified'])->name('moderator-dashboard');
-
-
     Route::prefix('administration-panel')->name('admin.')->middleware(['auth', 'moderator'])->group(function () {
-        // Route::get('/', [])->name('dashboard');
-        // Route::get('/orders', [])->name('');
-        // Route::get('/add-moderator', [])->name('');
-        // Route::post('/add-moderator', [])->middleware(['password.confirm'])->name('');
-        // Route::get('/change-password', [])->name('');
-        // Route::post('/change-password), [])->name('');
-        // Route::get('/create-event', [])->name('');
-        // Route::post('/create-event), [])->name('');
-        // Route::get('/search-events/{search}', [])->name('');
-        // Route::get('/edit-event/{id}', [])->whereNumber('id')->name('');
-        // Route::post('/edit-event/{id}), [])->whereNumber('id')->name('');
+        Route::get('/', [AdministrationPanelController::class, 'dashboard'])
+            ->name('dashboard');
 
+        Route::get('/search', [AdministrationPanelController::class, 'search'])
+            ->name('search');
 
-        // Route::delete('/{idEvent}/comments/{idComment}', [])->whereNumber('idEvent')->whereNumber('idComment')->middleware(['moderator'])->name('');
+        Route::get('/orders', [AdministrationPanelController::class, 'orders'])
+            ->name('orders');
+
+        Route::get('/add-moderator', [AdministrationPanelController::class, 'showAddModerator'])
+            ->middleware(['password.confirm'])
+            ->name('addModerator');
+
+        Route::post('/add-moderator', [AdministrationPanelController::class, 'storeAddModerator']);
+
+        Route::get('/change-password', [AdministrationPanelController::class, 'changePassword'])
+            ->name('change-password');
+
+        Route::get('/create-event', [AdministrationPanelController::class, 'showCreateEvent'])
+            ->name('createEvent');
+
+        Route::post('/create-event', [AdministrationPanelController::class, 'storeCreateEvent']);
+
+        Route::get('/edit-event/{id}', [AdministrationPanelController::class, 'showEditEvent'])
+            ->whereNumber('id')
+            ->name('editEvent');
+
+        Route::post('/edit-event/{id}', [AdministrationPanelController::class, 'showEditEvent'])
+            ->whereNumber('id');
     });
 
-    // Route::get('/stats/{type}, [])->middleware(['moderator'])->name()->whereIn('category', ['daily', 'monthly', 'annually']);
-    // Route::get('/cities/{search}, [])->middleware(['moderator'])->name();
+    Route::prefix('stats')->name('stats.')->middleware(['moderator'])->group(function () {
+        Route::get('/categories', [StatsController::class, 'categories'])
+            ->name('categories');
+
+        Route::get('/revenue/{type}', [StatsController::class, 'revenue'])
+            ->where('type', 'daily|monthly|annual')
+            ->name('revenue');
+
+        Route::get('/cities', [StatsController::class, 'cities'])
+            ->name('cities');
+    });
+});
+
+Route::fallback(function () {
+    return view('errors.404');
 });

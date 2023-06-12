@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactMail;
+use App\Mail\ContactResponseMail;
+use Illuminate\Support\Facades\RateLimiter;
 
 class UserProfileController extends Controller
 {
@@ -58,7 +61,8 @@ class UserProfileController extends Controller
             'password' => Hash::make($newPassword)
         ]);
 
-        return redirect()->to(route('user-profile'))->with('status', 'Password has been changed');
+        // return redirect()->to(route('user-profile'))->with('status', 'Password has been changed');
+        return back()->with('status', 'Password has been changed');
     }
 
     /**
@@ -104,6 +108,15 @@ class UserProfileController extends Controller
             'content' => ['required', 'string', 'max:300'],
         ]);
 
+        $user = $request->user();
+        $throttleKey = 'sendContactMail:' . '|' . $user->id_user;
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+            return back()->with('info', 'Contact form limit exceeded!');
+        }
+
+        RateLimiter::hit($throttleKey);
+
         $subjectId = $request->subject;
         $subject = '';
 
@@ -123,39 +136,16 @@ class UserProfileController extends Controller
 
         $content = htmlspecialchars($request->content, ENT_QUOTES, 'UTF-8');
 
-        // Mail::raw('This is a simple text', function ($m) {
-        //     $m->to('toemail@abc.com')->subject('Email Subject');
-        //   });
-        // Mail::to($request->user())->send(new OrderShipped($order));
+        Mail::to(config('ticketi.contactFormEmail'))
+            ->send((new ContactMail($user, $subject, $content))->onQueue('low'));
 
-        // Mail::to('receiver-email-id')->send(new NotifyMail());
+        // Response mail
+        Mail::to($user->email)
+            ->send((new ContactResponseMail($subject, $content))->onQueue('low'));
 
-        // if (Mail::failures()) {
-        //     return response()->Fail('Sorry! Please try again latter');
-        // } else {
-        //     return response()->success('Great! Successfully send in your mail');
-        // }
-
-        //=======================================
-        // Mail::to($request->user())
-        //     ->cc($moreUsers)
-        //     ->bcc($evenMoreUsers)
-        //     ->queue(new OrderShipped($order));
-        // $message = (new OrderShipped($order))
-        //     ->onConnection('sqs')
-        //     ->onQueue('emails');
-
-        // Mail::to($request->user())
-        //     ->cc($moreUsers)
-        //     ->bcc($evenMoreUsers)
-        //     ->queue($message);
-
-        // Mail::to($request->user())
-        //     ->cc($moreUsers)
-        //     ->bcc($evenMoreUsers)
-        //     ->later(now()->addMinutes(10), new OrderShipped($order));
-        //=======================================
-        // email zwrotny Thank you for contact, dont respond ! {{ $content }}
+        // dispatch(function () {
+        //     Mail::to('taylor@example.com')->send(new WelcomeMessage);
+        // })->afterResponse();
 
         return back()->with('status', 'Contact mail has been sent');
     }
