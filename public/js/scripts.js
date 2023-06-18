@@ -1,10 +1,5 @@
 import { convertUTCToLocal } from "./helper.js";
 
-// var source = new EventSource('.php');
-// source.onmessage = function (event) {
-//   document.getElementById('result').innerHTML += event.data + '<br>';
-// };
-
 // Disabling form submissions if there are invalid fields
 (function () {
     "use strict";
@@ -76,7 +71,7 @@ if (!!popoverElement) {
 var tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
 );
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+export var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
 

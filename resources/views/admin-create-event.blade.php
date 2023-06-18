@@ -37,7 +37,7 @@
                 <p><br /></p>
             ') !!}
         </div>
-        <input type="hidden" name="description" value="{{ old('description') }}" id="descriptionContentInput" />
+        <input type="hidden" name="description" id="descriptionContentInput" required />
         </div>
         <div class="mb-1">
         <label for="categorySelect" class="form-label"
@@ -52,7 +52,7 @@
         >
             <option value>Select category...</option>
             @foreach ($categories as $category)
-                <option value="{{ $category->id_category }}" @if (old('idCategory') === $category->id_category) selected @endif>{{ $category->name }}</option>
+                <option value="{{ $category->id_category }}" @if (old('idCategory') == $category->id_category) selected @endif>{{ $category->name }}</option>
             @endforeach
         </select>
         </div>
@@ -74,38 +74,39 @@
         ></div>
         </div>
         <div class="mb-1">
-        <label for="streetInput" class="form-label">Street</label>
-        <input
-            type="text"
-            class="form-control"
-            name="street"
-            id="streetInput"
-            maxlength="65"
-            value="{{ old('street') }}"
-            required
-        />
-        <div class="invalid-feedback">Street is required</div>
-        </div>
-        <div class="mb-1">
-        <label for="cityInput" class="form-label"
+            <label for="cityInput" class="form-label"
             >City</label
-        >
-        <input
+            >
+            <input
             list="cityDatalist"
             class="form-control"
             id="cityInput"
             name="city"
             maxlength="45"
             minlength="3"
+            data-url="{{ route('stats.cities') }}"
             value="{{ old('city') }}"
             aria-describedby="cityHelp"
             required
-        />
-        <div id="cityHelp" class="form-text">
-            Input min. 3 letters to get hint
+            />
+            <div id="cityHelp" class="form-text">
+                Input min. 3 letters to get hint
+            </div>
+            <datalist id="cityDatalist">
+            </datalist>
         </div>
-        <datalist id="cityDatalist">
-        </datalist>
+        <div class="mb-1">
+            <label for="streetInput" class="form-label">Street</label>
+            <input
+                type="text"
+                class="form-control"
+                name="street"
+                id="streetInput"
+                maxlength="65"
+                value="{{ old('street') }}"
+                required
+            />
+            <div class="invalid-feedback">Street is required</div>
         </div>
         <div class="mb-1">
         <label for="postalCodeInput" class="form-label"
@@ -132,7 +133,7 @@
             id="ticketPriceInput"
             name="ticketPrice"
             class="form-control"
-            max="10000.0"
+            max="9999.0"
             min="1.0"
             step="0.01"
             aria-label="Price (in euro)"
@@ -149,9 +150,9 @@
         >
         <input
             type="number"
+            id="ticketCountInput"
             class="form-control"
             name="ticketCount"
-            id="ticketCountInput"
             min="1"
             max="99999"
             value="{{ old('ticketCount') }}"
@@ -223,7 +224,7 @@
         <input
             type="checkbox"
             name="childAllowed"
-            value="True"
+            value="true"
             class="form-check-input"
             id="childAllowedCheckbox"
             @if (old('childAllowed')) checked @endif
@@ -236,7 +237,7 @@
         <input
             type="checkbox"
             name="isDraft"
-            value="True"
+            value="true"
             class="form-check-input"
             id="isDraftCheckbox"
             checked

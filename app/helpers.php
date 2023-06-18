@@ -22,3 +22,16 @@ if (!function_exists('get_cart_total')) {
         return $total;
     }
 }
+
+if (!function_exists('get_directory_size')) {
+    function get_directory_size($path)
+    {
+        $size = 0;
+
+        foreach (glob(rtrim($path, '/') . '/*', GLOB_NOSORT) as $each) {
+            $size += is_file($each) ? filesize($each) : get_directory_size($each);
+        }
+
+        return $size;
+    }
+}

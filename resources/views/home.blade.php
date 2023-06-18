@@ -15,7 +15,7 @@
                         Web service with tickets for spectacular events.
                     </p>
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{ route('home') }}">View events</a>
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{ route('events') }}">View events</a>
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                                 {{ $event->likes_count }}
                                 <span class="visually-hidden">likes</span>
                             </span>
-                            <img class="card-img-top event-card-image" src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}" loading="lazy" />
+                            <img class="card-img-top event-card-image" src="{{ $event->image ? Storage::url($event->image) : asset('/img/event-placeholder.webp') }}" loading="lazy" />
                             <div class="card-body p-4">
                                 <a class="text-decoration-none link-dark stretched-link" href="{{ route('event.page', [$event->url]) }}">
                                     <h5 class="card-title mb-3">{{ $event->name }}</h5>

@@ -9,7 +9,7 @@
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="{{ route('home') }}">Events</a>
+        <a href="{{ route('events') }}">Events</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         <a id="eventLink" class="link-secondary text-decoration-none" href="{{ route('event.page', [$event->url]) }}">{{ $event->name }}</a>
@@ -29,7 +29,7 @@
         @foreach ($images as $key => $image)
         <div class="carousel-item {{ ($key === 0) ? 'active' : '' }}">
         <img
-            src="{{ $image->url }}"
+            src="{{ Storage::url($image->url) }}"
             class="d-block w-100"
             loading="lazy"
         />
@@ -199,7 +199,7 @@
     @if ($video)
     <div class="ratio ratio-16x9">
         <iframe
-        src="{{ $video->url }}"
+        src="{{ Storage::url($video->url) }}"
         allowfullscreen
         ></iframe>
     </div>

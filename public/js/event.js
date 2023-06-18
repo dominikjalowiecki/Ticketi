@@ -4,6 +4,7 @@ import {
     ajaxPostFormCustom,
     ajaxPostFormDataCustom,
 } from "./ajax.js";
+import { tooltipList } from "./scripts.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     // Update URL to match event

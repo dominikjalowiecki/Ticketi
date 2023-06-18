@@ -20,7 +20,7 @@
                             <th>Start date</th>
                             <th>Last update</th>
                             <th>Ticket price</th>
-                            <th>Sold</th>
+                            <th>Tickets count</th>
                             <th>Is adult only</th>
                             <th>Is draft</th>
                         </tr>
@@ -33,7 +33,7 @@
                             <th>Start date</th>
                             <th>Last update</th>
                             <th>Ticket price</th>
-                            <th>Sold</th>
+                            <th>Tickets count</th>
                             <th>Is adult only</th>
                             <th>Is draft</th>
                         </tr>

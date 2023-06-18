@@ -22,7 +22,7 @@
                     <div class="row event-card-internal g-0">
                     <div class="col-md-4 d-flex align-items-center">
                         <img
-                        src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}"
+                        src="{{ $event->image ? Storage::url($event->image) : asset('/img/event-placeholder.webp') }}"
                         class="event-card-image rounded-start"
                         loading="lazy"
                         />

@@ -17,12 +17,6 @@ class StatsController extends Controller
      */
     public function categories(Request $request)
     {
-        // Render comments ajax pagination
-        // if ($request->expectsJson()) {
-        //     $view = view('data', compact('posts'))->render();
-        //     return response()->json(['html' => $view], 201);
-        // }
-
         if (!$request->expectsJson()) abort(403);
 
         $stats = DB::table('orders_count_by_category')
@@ -68,7 +62,7 @@ class StatsController extends Controller
     {
         try {
             $request->validate([
-                's' => ['required', 'string', 'max:30'],
+                's' => ['required', 'string', 'min:3', 'max:30'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);
@@ -76,10 +70,21 @@ class StatsController extends Controller
 
         $search = $request->s;
 
-        $cities = Cache::remember('cities|' . $search, 60 * 60, function () {
-            return;
+        $matches = Cache::remember('cities|' . $search, 60 * 60, function () use ($search) {
+            $matches = [];
+            if (($handle = fopen(resource_path('data/poland.csv'), "r")) !== false) {
+                while ($row = fgetcsv($handle)) {
+                    if (preg_match("/$search/i", $city = $row[0])) {
+                        $matches[] = $city;
+                    }
+                }
+
+                fclose($handle);
+            }
+
+            return $matches;
         });
 
-        return response()->json($cities, 200);
+        return response()->json($matches, 200);
     }
 }

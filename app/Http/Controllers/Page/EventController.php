@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Input;
-
-use Illuminate\Support\Facades\Log;
 
 
 class EventController extends Controller
@@ -60,7 +57,7 @@ class EventController extends Controller
         $city = $request->city;
         if ($city !== null) {
             $query = $query
-                ->whereRaw(DB::raw("events_list.id_city IN (get_cities_in_area('$city', 1000))"));
+                ->whereRaw(DB::raw("events_list.id_city IN (get_cities_in_area('$city', 10000))"));
         }
 
         $underage = $request->underage;
@@ -200,13 +197,6 @@ class EventController extends Controller
 
         $query = DB::table('event')->where('id_event', $idEvent);
 
-        // $eventExists = (bool)$query->count();
-
-        // if (!$eventExists) return response('', 400);
-
-        // return response('hello', 200)->header('Content-Type', 'text/plain', 'Accept: 'application/json');
-        // return response()->json(['hello' => $value], 201); 
-
         $query->increment('likes_count');
 
         $count = ($query->get())->first()->likes_count;
@@ -234,11 +224,6 @@ class EventController extends Controller
 
         $user = Auth::user();
 
-        // $isFollowed = !(DB::table('follow')
-        //     ->where('id_user', $user->id_user)
-        //     ->where('id_event', $idEvent)
-        //     ->get())->isEmpty();
-
         $numberOfAffectedRows = DB::table('follow')
             ->where('id_user', $user->id_user)
             ->where('id_event', $idEvent)
@@ -253,15 +238,5 @@ class EventController extends Controller
         }
 
         return response('', 200);
-    }
-
-    /**
-     * Create new event.
-     *
-     * @param  string $idString
-     * @return \Illuminate\View\View
-     */
-    public function store(string $idString)
-    {
     }
 }

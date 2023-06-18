@@ -36,7 +36,7 @@
             </div>
             <div class="mb-1">
                 <label for="birthdateInput" class="form-label">{{ __('Birthdate') }}</label>
-                <input type="date" class="form-control" name="birthdate" id="ebirthdateInput" value="{{ old('birthdate') }}" required />
+                <input type="date" class="form-control" name="birthdate" id="birthdateInput" value="{{ old('birthdate') }}" required />
                 <div class="invalid-feedback">
                     Birthdate cannot be in future
                 </div>

@@ -1,4 +1,5 @@
 import { ajaxPostFormDataCustom } from "./ajax.js";
+import { tooltipList } from "./scripts.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const entries = performance.getEntriesByType("navigation");

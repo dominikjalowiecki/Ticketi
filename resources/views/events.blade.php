@@ -64,7 +64,7 @@
               >Search</label
             >
             <input
-              type="text"
+              type="search"
               id="searchInput"
               class="form-control"
               name="search"
@@ -73,15 +73,6 @@
               value="{{ old('search', Request::get('search')) }}"
             />
           </div>
-          {{-- <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              placeholder="Input to search..."
-            />
-            <label for="floatingInput">Search (fulltext)</label>
-          </div> --}}
           <div class="mb-3">
             <label for="categorySelect" class="form-label"
               >Category</label
@@ -138,13 +129,6 @@
           >
             Submit
           </button>
-          {{-- <button
-            id="filtersResetButton"
-            class="btn btn-secondary btn-lg-full-width"
-            type="reset"
-          >
-            Reset
-          </button> --}}
           <a
             href="{{ route('events') }}"
             class="btn btn-secondary btn-lg-full-width"
@@ -169,7 +153,7 @@
         <div class="row event-card-internal g-0">
           <div class="col-md-4 d-flex align-items-center">
             <img
-              src="{{ $event->image ? $event->image : asset('/img/event-placeholder.webp') }}"
+              src="{{ $event->image ? Storage::url($event->image) : asset('/img/event-placeholder.webp') }}"
               class="event-card-image rounded-start"
               loading="lazy"
             />

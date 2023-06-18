@@ -50,24 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Limit characters in quill rich textarea
     const characterLimit = 400;
     quill.on("text-change", function (delta, old, source) {
-        // console.log(quill.getLength());
-        // console.log(quill.getContents));
-        // console.group("Test");
-        // console.log(quill.root.innerHTML.length);
-        // console.log(quill.root.innerHTML);
-        // console.groupEnd();
-
         if (quill.getLength() > characterLimit) {
             quill.deleteText(characterLimit, quill.getLength());
         }
-
-        // if (quill.root.innerHTML.length > characterLimit) {
-        //     quill.deleteText(characterLimit, quill.root.innerHTML.length);
-        //     quill.root.innerHTML = quill.root.innerHTML.substring(
-        //         0,
-        //         characterLimit
-        //     );
-        // }
     });
 
     const createEventForm = document.querySelector("#createEventForm");
@@ -83,9 +68,9 @@ document.addEventListener("DOMContentLoaded", function () {
         descriptionContent.value = JSON.stringify(quill.getContents());
         descriptionContent.html = JSON.stringify(quill.root.innerHTML);
 
-        console.log(descriptionContent);
-        descriptionContentInput.value = descriptionContent.html;
-        e.preventDefault();
+        // descriptionContentInput.value = descriptionContent.html;
+        descriptionContentInput.value = quill.root.innerHTML;
+        // e.preventDefault();
     });
 
     // Handling tags input
@@ -97,6 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
         ENTER: 13,
         SPACE: 32,
     };
+
+    for (const tag of tags) {
+        const tagBadge = document.createElement("span");
+        tagBadge.classList.add("badge", "bg-secondary", "tag-badge");
+        tagBadge.innerHTML =
+            tag + '<i class="bi bi-x tag-delete" aria-label="Delete tag"></i>';
+        tagsList.appendChild(tagBadge);
+    }
 
     tagsInput.addEventListener("keydown", function (e) {
         const target = e.target;
@@ -112,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 tagBadge.classList.add("badge", "bg-secondary", "tag-badge");
                 tagBadge.innerHTML =
                     tagValue +
-                    '<i class="bi bi-x tag-delete" aria-hidden="true"></i><span class="visually-hidden">Delete tag</span></span>';
+                    '<i class="bi bi-x tag-delete" aria-label="Delete tag"></i>';
                 tagsList.appendChild(tagBadge);
             }
             target.value = "";
@@ -133,6 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             target.closest(".tag-badge").remove();
+
+            tagsContentInput.value = JSON.stringify(tags);
         }
 
         e.stopPropagation();
@@ -143,37 +138,42 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handling city input
     const cityInput = document.querySelector("#cityInput");
     const cityDatalist = document.querySelector("#cityDatalist");
+    const cityUrl = cityInput.dataset.url;
     let cityDatalistTimeout;
 
-    cityInput.addEventListener("input", function (e) {
+    // cityInput.addEventListener("input", function (e) {
+    cityInput.addEventListener("keydown", function (e) {
         const target = e.target;
 
         clearTimeout(cityDatalistTimeout);
 
         if (target.value.length < 3) return;
 
-        cityDatalistTimeout = setTimeout(() => {
+        cityDatalistTimeout = setTimeout(async () => {
             let res;
 
-            // fetch(
-            // 'https://example.com?' +
-            // new URLSearchParams({
-            //   s: e.target.value,
-            // }))
-            //   .then((res) => {
-            //     if (!res.ok) throw new Error('Bad response from server');
-            //     return res.json();
-            //   })
-            //   .then((data) => (res = data))
-            //   .catch((err) => {});
-            res = ["Drożdże", "Dżem", "Bułka"];
+            await fetch(
+                cityUrl +
+                    "?" +
+                    new URLSearchParams({
+                        s: e.target.value,
+                    })
+            )
+                .then(async (response) => {
+                    if (!response.ok) throw new Error("Something went wrong");
+
+                    res = await response.json();
+                })
+                .catch((error) => {
+                    appendAlertMessage(error.message, ALERT_TYPE.danger);
+                });
 
             cityDatalist.innerHTML = "";
             const datalistFragment = document.createDocumentFragment();
             res.forEach((el) => {
                 let option = document.createElement("option");
                 option.value = el;
-                option.textContent = el;
+                // option.textContent = el;
 
                 datalistFragment.appendChild(option);
             });

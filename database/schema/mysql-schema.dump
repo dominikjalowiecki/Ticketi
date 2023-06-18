@@ -71,7 +71,7 @@ CREATE TABLE `event` (
   `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tags` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) NOT NULL,
+  `url` varchar(255) DEFAULT NULL,
   `id_category` int(11) NOT NULL,
   `start_datetime` datetime NOT NULL,
   `ticket_price` decimal(10,2) NOT NULL,

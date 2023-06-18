@@ -12,8 +12,6 @@ use App\Http\Controllers\Page\TicketController;
 use App\Http\Controllers\Page\AdministrationPanelController;
 use App\Http\Controllers\Ajax\StatsController;
 
-// use Illuminate\Support\Facades\DB;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -135,15 +133,19 @@ Route::middleware(['throttle:global'])->group(function () {
         Route::get('/create-event', [AdministrationPanelController::class, 'showCreateEvent'])
             ->name('createEvent');
 
-        Route::post('/create-event', [AdministrationPanelController::class, 'storeCreateEvent']);
+        Route::post('/create-event', [AdministrationPanelController::class, 'storeCreateEvent'])
+            ->middleware(['throttle:2,1']);
 
         Route::get('/edit-event/{id}', [AdministrationPanelController::class, 'showEditEvent'])
             ->whereNumber('id')
             ->name('editEvent');
 
-        Route::post('/edit-event/{id}', [AdministrationPanelController::class, 'showEditEvent'])
+        Route::post('/edit-event/{id}', [AdministrationPanelController::class, 'storeEditEvent'])
+            ->middleware(['throttle:2,1'])
             ->whereNumber('id');
     });
+
+
 
     Route::prefix('stats')->name('stats.')->middleware(['moderator'])->group(function () {
         Route::get('/categories', [StatsController::class, 'categories'])

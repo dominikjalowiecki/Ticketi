@@ -43,13 +43,12 @@
         <div class="input-group">
           <input
             class="form-control"
-            type="text"
+            type="search"
             name='s'
             placeholder="Search for events..."
             aria-label="Search for events..."
             aria-describedby="btnNavbarSearch"
             maxlength="50"
-            required
           />
           <button class="btn btn-primary" id="btnNavbarSearch" type="submit">
             <i class="fas fa-search"></i>
