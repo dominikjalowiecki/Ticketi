@@ -22,8 +22,7 @@ import { convertUTCToLocal } from "./helper.js";
     });
 })();
 
-// ====================
-// Enabling cart popover
+// Enable cart popover
 const myDefaultAllowList = {
     ...bootstrap.Tooltip.Default.allowList,
     table: [],
@@ -66,7 +65,6 @@ if (!!popoverElement) {
     handleMobileChange(popupMediaQuery);
 }
 
-// ==================
 // Enabling tooltips everywhere
 var tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')

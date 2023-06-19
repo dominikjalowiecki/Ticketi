@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("_token", csrfToken);
 
             ajaxPostFormDataCustom(formData, action, () => {
-                // From scripts.js
                 tooltipList.forEach((el) => {
                     el.hide();
                 });

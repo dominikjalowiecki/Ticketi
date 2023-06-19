@@ -1,6 +1,4 @@
-// =================
 // Function for appending alert messages
-
 export const ALERT_TYPE = {
     danger: 0,
     info: 1,
@@ -32,7 +30,6 @@ export function appendAlertMessage(alertMessage, type) {
     }
 }
 
-// =================
 export function setValid(target) {
     target.classList.remove("is-invalid");
     target.classList.add("is-valid");
@@ -45,7 +42,6 @@ export function setInvalid(target) {
     target.setCustomValidity("Invalid field");
 }
 
-// ==================
 // Converting time from UTC to local time
 export function convertUTCToLocal() {
     const timeComponents = document.querySelectorAll(".time-component");

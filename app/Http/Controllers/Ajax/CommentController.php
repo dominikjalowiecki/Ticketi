@@ -20,7 +20,7 @@ class CommentController extends Controller
     {
         try {
             $request->validate([
-                'idEvent' => ['required', 'integer', 'gt:0'],
+                'idEvent' => ['required', 'integer', 'gt:0', 'exists:event,id_event'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);
@@ -56,10 +56,10 @@ class CommentController extends Controller
         }
 
         $idEvent = (int)$request->idEvent;
-        $throttleKey = 'addComment:' . $idEvent . '|' . optional($request->user())->id_user ?: $request->ip();
+        $throttleKey = 'addComment:' . $idEvent . '|' . $request->user()->id_user;
 
         if (RateLimiter::tooManyAttempts($throttleKey, 2)) {
-            return response('Rate limit exceeded', 429);
+            return response('Rate limit exceeded.', 429);
         }
 
         RateLimiter::hit($throttleKey);
@@ -73,10 +73,6 @@ class CommentController extends Controller
                 "id_user" => $user->id_user,
                 "id_event" => $idEvent,
             ]);
-
-        // $comment = DB::table('comment')
-        //     ->where('id_comment', $idComment)
-        //     ->get();
 
         $comments = DB::table('comment')
             ->join('user', 'comment.id_user', '=', 'user.id_user')
@@ -122,7 +118,7 @@ class CommentController extends Controller
     {
         try {
             $request->validate([
-                'idComment' => ['required', 'integer', 'gt:0'],
+                'idComment' => ['required', 'integer', 'gt:0', 'exists:comment,id_comment'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);
@@ -138,10 +134,6 @@ class CommentController extends Controller
         RateLimiter::hit($throttleKey);
 
         $query = DB::table('comment')->where('id_comment', $idComment);
-
-        // $commentExists = (bool)$query->count();
-
-        // if (!$commentExists) return response('', 400);
 
         $query->increment('likes_count');
 

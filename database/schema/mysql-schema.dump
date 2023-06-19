@@ -348,7 +348,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `get_cities_in_area`(city_name VARCHAR(45), distance SMALLINT UNSIGNED) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_bin
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_cities_in_area`(`city_name` VARCHAR(45), `distance` SMALLINT UNSIGNED) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
     READS SQL DATA
     COMMENT 'Get ids of cities in given distance (meters) of particular city'
 BEGIN
@@ -395,7 +395,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `daily_income` AS select cast(`order`.`created_datetime` as date) AS `date`,sum(`order`.`price`) AS `income`,count(`order`.`id_order`) AS `orders_count` from `order` group by cast(`order`.`created_datetime` as date) */;
+/*!50001 VIEW `daily_income` AS select cast(`order`.`created_datetime` as date) AS `date`,sum(`order`.`price`) AS `income`,count(`order`.`id_order`) AS `orders_count` from `order` where month(`order`.`created_datetime`) = month(current_timestamp()) group by cast(`order`.`created_datetime` as date) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -423,7 +423,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `monthly_income` AS select date_format(`order`.`created_datetime`,'%Y-%m') AS `date`,sum(`order`.`price`) AS `income`,count(`order`.`id_order`) AS `orders_count` from `order` group by date_format(`order`.`created_datetime`,'%Y-%m') */;
+/*!50001 VIEW `monthly_income` AS select date_format(`order`.`created_datetime`,'%Y-%m') AS `date`,sum(`order`.`price`) AS `income`,count(`order`.`id_order`) AS `orders_count` from `order` where year(`order`.`created_datetime`) = year(current_timestamp()) group by date_format(`order`.`created_datetime`,'%Y-%m') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;

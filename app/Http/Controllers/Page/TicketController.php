@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class TicketController extends Controller
 {
     /**
-     *  Get ticket.
+     *  Show ticket.
      *
      * @param  \App\Http\Request $request
      * @return \Illuminate\View\View

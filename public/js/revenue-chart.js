@@ -7,18 +7,14 @@ const revenueChartTypeSelect = document.querySelector(
     "#revenueChartTypeSelect"
 );
 
-// Area Chart Example
-var ctxRevenue = document.getElementById("myAreaChart");
+var ctxRevenue = document.getElementById("revenueChart");
 var myLineChart;
 
 revenueChartTypeSelect.addEventListener("change", async function (e) {
-    // myLineChart.destroy();
-    // generateRevenueChart();
-
     try {
         var res = await fetchRevenueStats();
     } catch (error) {
-        error.message; // 'An error has occurred: 404'
+        error.message;
         return;
     }
 
@@ -29,14 +25,10 @@ revenueChartTypeSelect.addEventListener("change", async function (e) {
     myLineChart.data.labels = dates;
     myLineChart.data.datasets[0].data = income;
 
-    // myLineChart.options.scales.xAxes[0].ticks.maxTicksLimit = dates.length;
     myLineChart.options.scales.yAxes[0].ticks.max =
         250 + 250 * Math.floor(maxIncome / 250);
 
-    // myLineChart.options.scales.xAxes.ticks.maxTicksLimit
-
-    // myLineChart.data.datasets[0].data[2] = 50; // Would update the first dataset's value of 'March' to be 50
-    myLineChart.update(); // Calling update now animates the position of March from 90 to 50.
+    myLineChart.update();
 });
 
 async function fetchRevenueStats() {
@@ -56,7 +48,6 @@ async function fetchRevenueStats() {
 
     const revenue = await response.json();
 
-    // return revenue;
     return {
         dates: revenue.map((revenue) => revenue.date),
         income: revenue.map((revenue) => revenue.income),
@@ -67,20 +58,11 @@ async function generateRevenueChart() {
     try {
         var res = await fetchRevenueStats();
     } catch (error) {
-        error.message; // 'An error has occurred: 404'
+        error.message;
         return;
     }
 
     const { dates, income } = res;
-    // const dates = revenue.map((revenue) => revenue.date);
-    // const income = revenue.map((revenue) => revenue.income);
-
-    // names[names.length - 1] = "Total orders";
-
-    // const values = categories.map((category) =>
-    //     parseInt(category.orders_count)
-    // );
-
     const maxIncome = Math.max.apply(null, income);
 
     myLineChart = new Chart(ctxRevenue, {
@@ -116,7 +98,6 @@ async function generateRevenueChart() {
                         },
                         ticks: {
                             maxTicksLimit: 31,
-                            // maxTicksLimit: dates.length,
                         },
                     },
                 ],

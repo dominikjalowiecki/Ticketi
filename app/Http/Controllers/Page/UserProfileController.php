@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Page;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
@@ -61,7 +60,6 @@ class UserProfileController extends Controller
             'password' => Hash::make($newPassword)
         ]);
 
-        // return redirect()->to(route('user-profile'))->with('status', 'Password has been changed');
         return back()->with('status', 'Password has been changed');
     }
 
@@ -87,10 +85,9 @@ class UserProfileController extends Controller
     /**
      * Display User Profile contact form.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function contactForm(Request $request)
+    public function contactForm()
     {
         return view('user-contact-form');
     }
@@ -142,10 +139,6 @@ class UserProfileController extends Controller
         // Response mail
         Mail::to($user->email)
             ->send((new ContactResponseMail($subject, $content))->onQueue('low'));
-
-        // dispatch(function () {
-        //     Mail::to('taylor@example.com')->send(new WelcomeMessage);
-        // })->afterResponse();
 
         return back()->with('status', 'Contact mail has been sent');
     }

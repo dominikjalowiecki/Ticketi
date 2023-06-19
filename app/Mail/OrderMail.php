@@ -34,6 +34,6 @@ class OrderMail extends Mailable
     {
         return $this
             ->markdown('emails.order')
-            ->subject('Ticketi | Ticket Purchase');
+            ->subject('Ticketi | Ticket purchase');
     }
 }

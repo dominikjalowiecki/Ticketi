@@ -15,7 +15,7 @@
     <title>Ticketi - Administration Panel</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link href="{{ asset('css/simple-datatables.style.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/bootstrap-adm.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/adm-bootstrap.css') }}" rel="stylesheet" />
     @stack('styles')
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
@@ -144,7 +144,7 @@
     <script type="module" src="{{ asset('js/adm-scripts.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/simple-datatables.min.js') }}"></script>
-    <script src="{{ asset('js/adm-datatables-simple-demo.js') }}"></script>
+    <script src="{{ asset('js/adm-datatables-simple.js') }}"></script>
     @endprepend
     @stack('scripts')
   </body>

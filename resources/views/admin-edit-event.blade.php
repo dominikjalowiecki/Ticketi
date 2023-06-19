@@ -172,7 +172,7 @@
           value="{{ old('startDatetime', $event->start_datetime) }}"
         />
         <div class="invalid-feedback">
-          Start date cannot be in past
+          Start datetime cannot be in past
         </div>
       </div>
       <div class="mb-3">

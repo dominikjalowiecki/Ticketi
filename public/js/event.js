@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("_method", "DELETE");
 
             ajaxPostFormDataCustom(formData, action, () => {
-                // From scripts.js
                 tooltipList.forEach((el) => {
                     el.hide();
                 });
@@ -68,8 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             ajaxPostFormDataCustom(formData, action, async (response) => {
                 const responseText = await response.text();
-
-                // From scripts.js
                 tooltipList.forEach((el) => {
                     el.hide();
                 });
@@ -169,8 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             ajaxPostFormCustom(target, target.action, async (response) => {
                 const responseText = await response.text();
-
-                // From scripts.js
                 tooltipList.forEach((el) => {
                     el.hide();
                 });

@@ -16,12 +16,12 @@
             <div class="accordion-item">
                 <h3 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Jak wysyłane są bilety?
+                        How are tickets sent?
                     </button>
                 </h3>
                 <div class="accordion-collapse collapse show" id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                        <strong>Tickets are sent after purchase to your email as a .pdf
+                        <strong>Tickets are sent after purchase to your email as `.pdf`
                             files.</strong>
                         You can find them also in
                         <a href="{{ route('user-tickets') }}">user profile</a>.
@@ -31,12 +31,12 @@
             <div class="accordion-item">
                 <h3 class="accordion-header" id="headingTwo">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        How the ticker ownership is verified?
+                        How the ticket ownership is verified?
                     </button>
                 </h3>
                 <div class="accordion-collapse collapse" id="collapseTwo" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                        Each ticket has it's own unique QR code identyfing the
+                        Each ticket has unique QR code which identifies the
                         owner.
                     </div>
                 </div>
@@ -68,10 +68,7 @@
                             <a href="{{ route('user-contact-form') }}" class="btn btn-outline-primary">Contact form</a>
                         </p>
                         <div class="h6 fw-bolder">Follow us</div>
-                        <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter"></i></a>
-                        <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-facebook"></i></a>
-                        <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-linkedin"></i></a>
-                        <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-youtube"></i></a>
+                        <a class="fs-5 px-2 link-dark" href="https://github.com/dominikjalowiecki"><i class="bi-github"></i></a>
                     </div>
                 </div>
             </div>

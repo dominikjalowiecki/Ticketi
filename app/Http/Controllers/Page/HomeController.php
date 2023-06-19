@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Cache;
 class HomeController extends Controller
 {
     /**
-     * Display Home view.
+     * Show Home view.
      *
      * @return \Illuminate\View\View
      */
     public function show()
     {
-        $events = Cache::remember('popular_events', 60 * 60, function () {
+        $events = Cache::remember('popular_events', 60, function () {
             return DB::table('events_list')
                 ->orderBy('likes_count', 'desc')
                 ->limit(3)

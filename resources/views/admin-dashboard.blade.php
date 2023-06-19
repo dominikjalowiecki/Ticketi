@@ -2,10 +2,7 @@
 
 @section('content')
 <h1 class="mt-4">Dashboard</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">Dashboard</li>
-</ol>
-<div class="row">
+<div class="row mt-4">
     <div class="col-xl-3 col-md-6">
     <div class="card bg-primary text-white mb-4">
         <div class="card-body">Total sold</div>
@@ -65,7 +62,7 @@
         </div>
         </div>
         <div class="card-body">
-        <canvas id="myAreaChart" data-url="{{ route('stats.revenue', ['']) }}" width="100%" height="40"></canvas>
+        <canvas id="revenueChart" data-url="{{ route('stats.revenue', ['']) }}" width="100%" height="40"></canvas>
         </div>
     </div>
     </div>
@@ -80,7 +77,7 @@
         </div>
         </div>
         <div class="card-body">
-        <canvas id="myBarChart" data-url="{{ route('stats.categories') }}" width="100%" height="40"></canvas>
+        <canvas id="categoriesChart" data-url="{{ route('stats.categories') }}" width="100%" height="40"></canvas>
         </div>
     </div>
     </div>
@@ -137,6 +134,6 @@
 
 @push('scripts')
 <script src="{{ asset('js/Chart.min.js') }}"></script>
-<script src="{{ asset('js/chart-area-demo.js') }}"></script>
-<script src="{{ asset('js/chart-bar-demo.js') }}"></script>
+<script src="{{ asset('js/revenue-chart.js') }}"></script>
+<script src="{{ asset('js/categories-chart.js') }}"></script>
 @endpush

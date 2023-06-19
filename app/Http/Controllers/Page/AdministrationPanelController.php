@@ -9,24 +9,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Validation\ValidationException;
-
 use Illuminate\Support\Facades\Http;
-
 use Illuminate\Support\Str;
-
 use Illuminate\Support\Facades\Log;
 
 class AdministrationPanelController extends Controller
 {
     /**
-     * Display Create Event.
+     * Show Create Event.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function showCreateEvent(Request $request)
+    public function showCreateEvent()
     {
         $categories = DB::table('category')->get();
         return view('admin-create-event', ['categories' => $categories]);
@@ -56,7 +51,7 @@ class AdministrationPanelController extends Controller
             'video' => ['file', 'max:10240', 'mimetypes:video/mp4,video/mov'],
         ], [
             'images.*.max' => 'Maximum allowed image size is 1MB',
-            'images.*.mimes' => 'Image must be of format jpn, png or gif',
+            'images.*.mimes' => 'Image must be of format jpg, png or gif',
             'video.max' => 'Maximum allowed video size is 10MB',
             'video.mimetypes' => 'Video must be of format mp4 or mov',
         ]);
@@ -110,13 +105,11 @@ class AdministrationPanelController extends Controller
             if (!$cityRow->isEmpty()) {
                 $idCity = ($cityRow->first())->id_city;
             } else {
-                // GET / VALIDATE STREET AND POSTAL CODE FROM GEOCODE API
                 $geocodeApiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?key=' . config('ticketi.maps') . '&address=' . $city . '&components=country:PL';
-                // $geocodeApiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?key=' . config('ticketi.maps') . '&address=Poland%2C' . $city;
+
                 $response = Http::accept('application/json')->get($geocodeApiUrl);
                 $json = $response->json();
 
-                // dd($json);
                 if (
                     !$response->ok() ||
                     $json['status'] == 'OVER_QUERY_LIMIT'
@@ -165,20 +158,17 @@ class AdministrationPanelController extends Controller
                 );
 
             // Update event url path
-            // $url = urlencode(str_replace(' ', '-', strtolower($name)) . '-' . $idEvent);
-            // $url = rawurlencode(str_replace(' ', '-', strtolower($name)) . '-' . $idEvent);
-            // $url = urlencode(str_replace(' ', '-', strtolower($name)) . '-' . $idEvent);
             $url = Str::slug($name, '-') . '-' . $idEvent;
             DB::table('event')
                 ->where('id_event', $idEvent)
                 ->update(['url' => $url]);
 
             if (get_directory_size(Storage::path('')) <= config('ticketi.uploadDirMaxSize')) {
-                // Handle adding images and video
+                // Handle adding images
                 $mediaInsert = [];
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('images');
-                    // $path = Storage::url($path);
+
                     $idMedium = DB::table('medium')
                         ->insertGetId(
                             [
@@ -194,7 +184,7 @@ class AdministrationPanelController extends Controller
                 if ($request->has('video')) {
                     $video = $request->file('video');
                     $path = $video->store('videos');
-                    // $path = Storage::url($path);
+
                     $idMedium = DB::table('medium')
                         ->insertGetId(
                             [
@@ -206,35 +196,31 @@ class AdministrationPanelController extends Controller
                     $mediaInsert[] = ['id_event' => $idEvent, 'id_medium' => $idMedium];
                 }
 
-                // Handle adding medium-event relation
+                // Handle adding medium-event relations
                 if (count($mediaInsert) > 0) {
                     DB::table('event_medium')
                         ->insert($mediaInsert);
                 }
             } else {
-                Log::warning('Uploads directory size exceeded limit!');
+                Log::warning('Uploads directory size limit exceeded!');
             }
         });
 
         if ($isDraft)
             return redirect()->to(route('admin.search', ['s' => $name]))->with('status', 'Event has been added');
 
-        return redirect()->to(route('event.page', [$url]));
+        return redirect()->to(route('event.page', [$url]))->with('status', 'Event has been added');
     }
 
     /**
-     * Display Edit Event.
+     * Show Edit Event.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function showEditEvent(Request $request, int $id)
+    public function showEditEvent(int $id)
     {
         if (!DB::table('event')->where('id_event', $id)->exists()) {
             return back();
-            // throw ValidationException::withMessages([
-            //     'id' => 'Invalid event identifier',
-            // ]);
         }
 
         $categories = DB::table('category')->get();
@@ -258,7 +244,7 @@ class AdministrationPanelController extends Controller
     }
 
     /**
-     * Handle edit event.
+     * Handle Edit event.
      *
      * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
@@ -286,7 +272,7 @@ class AdministrationPanelController extends Controller
             'video' => ['file', 'max:10240', 'mimetypes:video/mp4,video/mov'],
         ], [
             'images.*.max' => 'Maximum allowed image size is 1MB',
-            'images.*.mimes' => 'Image must be of format jpn, png or gif',
+            'images.*.mimes' => 'Image must be of format jpg, png or gif',
             'video.max' => 'Maximum allowed video size is 10MB',
             'video.mimetypes' => 'Video must be of format mp4 or mov',
         ]);
@@ -338,6 +324,7 @@ class AdministrationPanelController extends Controller
                 $idCity = ($cityRow->first())->id_city;
             } else {
                 $geocodeApiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?key=' . config('ticketi.maps') . '&address=' . $city . '&components=country:PL';
+
                 $response = Http::accept('application/json')->get($geocodeApiUrl);
                 $json = $response->json();
 
@@ -391,14 +378,9 @@ class AdministrationPanelController extends Controller
 
             if (get_directory_size(Storage::path('')) <= config('ticketi.uploadDirMaxSize')) {
                 $mediaInsert = [];
-                // Handle adding images and video
-                if ($request->has('images')) {
-                    // DB::table('event_medium')
-                    //     ->join('medium', 'event_medium.id_medium', '=', 'medium.id_medium')
-                    //     ->where('id_event', $id)
-                    //     ->where('medium.type', 'IMAGE')
-                    //     ->delete();
 
+                // Handle overriding of images
+                if ($request->has('images')) {
                     $media = DB::table('medium')
                         ->join('event_medium', 'medium.id_medium', '=', 'event_medium.id_medium')
                         ->where('event_medium.id_event', $id)
@@ -419,7 +401,7 @@ class AdministrationPanelController extends Controller
 
                     foreach ($request->file('images') as $image) {
                         $path = $image->store('images');
-                        // $path = Storage::url($path);
+
                         $idMedium = DB::table('medium')
                             ->insertGetId(
                                 [
@@ -432,13 +414,8 @@ class AdministrationPanelController extends Controller
                     }
                 }
 
-                // Handle adding video
+                // Handle overriding of video
                 if ($request->has('video')) {
-                    // DB::table('event_medium')
-                    //     ->join('medium', 'event_medium.id_medium', '=', 'medium.id_medium')
-                    //     ->where('id_event', $id)
-                    //     ->where('medium.type', 'VIDEO')
-                    //     ->delete();
                     $media = DB::table('medium')
                         ->join('event_medium', 'medium.id_medium', '=', 'event_medium.id_medium')
                         ->where('event_medium.id_event', $id)
@@ -459,7 +436,7 @@ class AdministrationPanelController extends Controller
 
                     $video = $request->file('video');
                     $path = $video->store('videos');
-                    // $path = Storage::url($path);
+
                     $idMedium = DB::table('medium')
                         ->insertGetId(
                             [
@@ -471,13 +448,13 @@ class AdministrationPanelController extends Controller
                     $mediaInsert[] = ['id_event' => $id, 'id_medium' => $idMedium];
                 }
 
-                // Handle adding medium-event relation
+                // Handle adding medium-event relations
                 if (count($mediaInsert) > 0) {
                     DB::table('event_medium')
                         ->insert($mediaInsert);
                 }
             } else {
-                Log::warning('Uploads directory size exceeded limit!');
+                Log::warning('Uploads directory size limit exceeded!');
             }
         });
 
@@ -490,10 +467,9 @@ class AdministrationPanelController extends Controller
     /**
      * Display Orders.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function orders(Request $request)
+    public function orders()
     {
         $orders = DB::table('orders_list')
             ->get();
@@ -504,10 +480,9 @@ class AdministrationPanelController extends Controller
     /**
      * Display Change Password.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function changePassword(Request $request)
+    public function changePassword()
     {
         return view('admin-change-password');
     }
@@ -515,10 +490,9 @@ class AdministrationPanelController extends Controller
     /**
      * Show add moderator form.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function showAddModerator(Request $request)
+    public function showAddModerator()
     {
         return view('admin-add-moderator');
     }
@@ -567,13 +541,6 @@ class AdministrationPanelController extends Controller
             return back();
         }
 
-        // $search = $request->s;
-        // $events = DB::table('event')
-        //     ->join('category', 'event.id_category', '=', 'category.id_category')
-        //     ->whereRaw(DB::raw("MATCH (event.name, event.description, event.tags) AGAINST ('$search' IN NATURAL LANGUAGE MODE)"))
-        //     ->select('event.*', 'category.name AS category_name')
-        //     ->get();
-
         $query = DB::table('event')
             ->join('category', 'event.id_category', '=', 'category.id_category');
 
@@ -591,30 +558,20 @@ class AdministrationPanelController extends Controller
     /**
      * Display Administration Panel dashboard.
      *
-     * @param  \App\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function dashboard(Request $request)
+    public function dashboard()
     {
         $ordersStats = DB::table('order')
             ->selectRaw('COUNT(id_order) AS orders_count, SUM(price) AS total_revenue')
-            ->get()->first();
-        // ->groupBy('id_order')
-
-
-        // Log::debug($ordersStats->toSql());
+            ->get()
+            ->first();
 
         $availableEventsCount = DB::table('event')
             ->where('is_draft', false)
-            ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
+            ->whereRaw('start_datetime > CURRENT_TIMESTAMP')
             ->where('ticket_count', '>', 0)
             ->count();
-
-        // $orders = DB::table('orders')
-        //     ->select('department', DB::raw('SUM(price) as total_sales'))
-        //     ->groupBy('department')
-        //     ->havingRaw('SUM(price) > ?', [2500])
-        //     ->get();
 
         $recent_orders = DB::table('orders_list')
             ->orderBy('created_datetime', 'desc')

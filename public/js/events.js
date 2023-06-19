@@ -10,20 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const sortValue = target.value;
         const action = sortForm.action;
 
-        // let newAction = sortForm.action;
-
-        // if (newAction.indexOf("?") === -1) newAction += "?";
-        // else newAction += "&";
-
-        // newAction += new URLSearchParams({
-        //     sort: target.value,
-        // });
-
-        // sortForm.action = newAction;
-
-        // window.location.replace(newAction);
-        // sortForm.submit();
-
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
 
@@ -90,23 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
             });
-            // fetch('', {
-            //   method: 'POST',
-            //   body: formData,
-            // })
-            //   .then(() => {
-            //     const icon = button.querySelector('.bi');
-            //     if (!!icon) {
-            //       if (icon.classList.contains('bi-star')) {
-            //         icon.classList.remove('bi-star');
-            //         icon.classList.add('bi-star-fill');
-            //       } else if (icon.classList.contains('bi-star-fill')) {
-            //         icon.classList.remove('bi-star-fill');
-            //         icon.classList.add('bi-star');
-            //       }
-            //     }
-            //   })
-            //   .catch((err) => {});
         }
     });
 });

@@ -31,7 +31,7 @@ class CartController extends Controller
                 ->select('id_event', 'name', 'url', 'ticket_price')
                 ->whereIn('id_event', $ids)
                 ->where('is_draft', false)
-                ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
+                ->whereRaw('start_datetime > CURRENT_TIMESTAMP')
                 ->where('ticket_count', '>', 0)
                 ->get();
 
@@ -64,7 +64,7 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         $request->validate([
-            'idEvent' => ['required', 'integer', 'gt:0'],
+            'idEvent' => ['required', 'integer', 'gt:0', 'exists:event,id_event'],
         ]);
 
         $idEvent = (int)$request->idEvent;
@@ -76,7 +76,7 @@ class CartController extends Controller
         $event = DB::table('event')
             ->where('id_event', $idEvent)
             ->where('is_draft', false)
-            ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
+            ->whereRaw('start_datetime > CURRENT_TIMESTAMP')
             ->where('ticket_count', '>', 0)
             ->get();
 
@@ -144,7 +144,7 @@ class CartController extends Controller
                 $info = [];
                 foreach ($events as $event) {
                     unset($cartItems[$event->id_event]);
-                    $info[] = 'Event ' . $event->id_event . '. ' . $event->name . ' is adult only!';
+                    $info[] = 'Event ' . $event->id_event . '. ' . $event->name . ' is adults only!';
                 }
 
                 Session::put('cart_items', $cartItems);
@@ -162,7 +162,7 @@ class CartController extends Controller
                 ->select('id_event', 'ticket_price')
                 ->whereIn('id_event', $ids)
                 ->where('is_draft', false)
-                ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
+                ->whereRaw('start_datetime > CURRENT_TIMESTAMP')
                 ->where('ticket_count', '>', 0)
                 ->lockForUpdate()
                 ->get();
@@ -206,7 +206,7 @@ class CartController extends Controller
     }
 
     /**
-     * Purchase cart.
+     * Handle removing from cart.
      * 
      * @param  Request $request
      * @return \Illuminate\Http\RedirectResponse

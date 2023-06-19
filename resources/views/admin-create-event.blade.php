@@ -34,7 +34,6 @@
             {!! old('description', '
                 <p>Hello World!</p>
                 <p>Some initial <strong>bold</strong> text</p>
-                <p><br /></p>
             ') !!}
         </div>
         <input type="hidden" name="description" id="descriptionContentInput" required />
@@ -177,7 +176,7 @@
             value="{{ old('startDatetime') }}"
         />
         <div class="invalid-feedback">
-            Start date cannot be in past
+            Start datetime cannot be in past
         </div>
         </div>
         <div class="mb-3">

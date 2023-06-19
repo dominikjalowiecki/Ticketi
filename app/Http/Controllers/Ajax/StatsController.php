@@ -74,7 +74,7 @@ class StatsController extends Controller
             $matches = [];
             if (($handle = fopen(resource_path('data/poland.csv'), "r")) !== false) {
                 while ($row = fgetcsv($handle)) {
-                    if (preg_match("/$search/i", $city = $row[0])) {
+                    if (preg_match("/^$search/i", $city = $row[0])) {
                         $matches[] = $city;
                     }
                 }

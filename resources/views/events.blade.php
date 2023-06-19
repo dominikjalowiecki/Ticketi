@@ -116,8 +116,8 @@
               class="form-check-input"
               id="underageInput"
               name="underage"
-              value="True"
-              @if(Request::get('underage')) checked @endif
+              value="true"
+              @if (Request::get('underage')) checked @endif
             />
             <label class="form-check-label" for="underageInput"
               >Underage event</label

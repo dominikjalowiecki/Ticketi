@@ -10,11 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Cache;
 
-
 class EventController extends Controller
 {
     /**
-     * Show events page.
+     * List events.
      *
      * @param  Request $request
      * @return \Illuminate\View\View
@@ -56,8 +55,13 @@ class EventController extends Controller
 
         $city = $request->city;
         if ($city !== null) {
+            $idsCities = DB::select(
+                DB::raw("SELECT get_cities_in_area(:city, 10000) AS idsCities"),
+                array('city' => $city)
+            )[0]->idsCities;
+
             $query = $query
-                ->whereRaw(DB::raw("events_list.id_city IN (get_cities_in_area('$city', 10000))"));
+                ->whereIn('id_city', explode(',', $idsCities));
         }
 
         $underage = $request->underage;
@@ -78,7 +82,7 @@ class EventController extends Controller
                 $query->orderBy('likes_count', 'desc');
                 break;
             case 'Starting soon':
-                $query->orderBy('start_datetime', 'desc');
+                $query->orderBy('start_datetime', 'asc');
                 break;
             case 'Newest':
             default:
@@ -95,7 +99,7 @@ class EventController extends Controller
             return DB::table('category')->get();
         });
 
-        $cities = Cache::remember('cities', 60 * 60, function () {
+        $cities = Cache::remember('cities', 60, function () {
             return DB::table('city')->get();
         });
 
@@ -105,14 +109,13 @@ class EventController extends Controller
     /**
      * Show event page.
      *
-     * @param  Request $request
      * @param  string $idString
      * @return \Illuminate\View\View
      */
-    public function show(Request $request, string $idString)
+    public function show(string $idString)
     {
         $idStringExplode = explode('-', $idString);
-        $idEvent = (int) end($idStringExplode);
+        $idEvent = (int)end($idStringExplode);
 
         $event = DB::table('event')
             ->join('category', 'event.id_category', '=', 'category.id_category')
@@ -120,7 +123,7 @@ class EventController extends Controller
             ->select('event.*', 'category.name as category_name', 'city.name as city_name')
             ->where('id_event', $idEvent)
             ->where('is_draft', false)
-            ->where('start_datetime', '>', 'CURRENT_TIMESTAMP')
+            ->whereRaw('start_datetime > CURRENT_TIMESTAMP')
             ->get();
 
         if ($event->isEmpty()) return abort(404);
@@ -214,7 +217,7 @@ class EventController extends Controller
     {
         try {
             $request->validate([
-                'idEvent' => ['required', 'integer', 'gt:0'],
+                'idEvent' => ['required', 'integer', 'gt:0', 'exists:event,id_event'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response('The given data was invalid.', 400);

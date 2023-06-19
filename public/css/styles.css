@@ -58,8 +58,7 @@
 }
 
 .event-card-image {
-    /* height: 100%; */
-    height: 250px;
+    height: 275px;
     object-fit: cover;
     width: 100%;
 }

@@ -61,16 +61,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     createEventForm.addEventListener("submit", function (e) {
-        const target = e.target;
+        // const target = e.target;
 
         // Handle quill rich textarea input
-        const descriptionContent = {};
-        descriptionContent.value = JSON.stringify(quill.getContents());
-        descriptionContent.html = JSON.stringify(quill.root.innerHTML);
+        // const descriptionContent = {};
+        // descriptionContent.value = JSON.stringify(quill.getContents());
+        // descriptionContent.html = JSON.stringify(quill.root.innerHTML);
 
-        // descriptionContentInput.value = descriptionContent.html;
         descriptionContentInput.value = quill.root.innerHTML;
-        // e.preventDefault();
     });
 
     // Handling tags input
@@ -129,10 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             tagsContentInput.value = JSON.stringify(tags);
         }
-
-        e.stopPropagation();
-        // e.stopImmediatePropagation();
-        e.preventDefault();
     });
 
     // Handling city input
@@ -141,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const cityUrl = cityInput.dataset.url;
     let cityDatalistTimeout;
 
-    // cityInput.addEventListener("input", function (e) {
     cityInput.addEventListener("keydown", function (e) {
         const target = e.target;
 
@@ -173,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
             res.forEach((el) => {
                 let option = document.createElement("option");
                 option.value = el;
-                // option.textContent = el;
 
                 datalistFragment.appendChild(option);
             });
@@ -228,7 +220,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (file.size > imageMaxSize) {
                 setInvalid(target);
 
-                // alert('Image size max 1MB!');
                 target.value = "";
 
                 e.preventDefault();
@@ -236,7 +227,6 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (!allowedMIMETypes.includes(file.type)) {
                 setInvalid(target);
 
-                // alert('Invalid file extension!');
                 target.value = "";
 
                 e.preventDefault();
@@ -245,16 +235,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 setValid(target);
             }
         }
-
-        // types = /(\.|\/)(mp3|mp4)$/i;
-        // //file is the file, that the user wants to upload
-        // file = data.files[0];
-
-        // if (types.test(file.type) || types.test(file.name)) {
-        //     alert("file is valid");
-        // else{
-        //     alert("file is invalid");
-        // }
 
         for (const file of target.files) {
             const imageThumbnail = document.createElement("img");

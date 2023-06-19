@@ -29,7 +29,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
         });
     }
 
-    // ==================
     // Disabling form submissions if there are invalid fields
     (function () {
         "use strict";

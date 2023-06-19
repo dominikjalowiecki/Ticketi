@@ -3,9 +3,7 @@ Chart.defaults.global.defaultFontFamily =
     '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = "#292b2c";
 
-// Bar Chart Example
-var ctxCategories = document.getElementById("myBarChart");
-
+var ctxCategories = document.getElementById("categoriesChart");
 const urlCategories = ctxCategories.dataset.url;
 
 async function fetchCategoriesStats() {
@@ -20,8 +18,7 @@ async function fetchCategoriesStats() {
         throw new Error(message);
     }
 
-    const categories = await response.json();
-    return categories;
+    return response.json();
 }
 
 fetchCategoriesStats()
@@ -81,5 +78,5 @@ fetchCategoriesStats()
         });
     })
     .catch((error) => {
-        error.message; // 'An error has occurred: 404'
+        error.message;
     });

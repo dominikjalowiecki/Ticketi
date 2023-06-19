@@ -45,11 +45,6 @@
                 <a href="{{ route('password.request') }}">I forgot password!</a>
             </li>
         </ul>
-        <!-- if (session()->has('status'))
-        <div class="alert alert-success text-center" role="alert">
-            {{ session('status') }}
-        </div>
-        endif -->
         @if (session()->has('info'))
         <div class="alert alert-warning text-center" role="alert">
             {{ session('info') }}
