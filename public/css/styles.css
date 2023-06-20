@@ -92,3 +92,7 @@
 #commentTextarea {
     resize: none;
 }
+
+.footer-link {
+    width: 55px;
+}

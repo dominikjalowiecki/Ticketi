@@ -1,6 +1,6 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container px-5">
+    <div class="container px-4">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">Ticketi</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -24,7 +24,7 @@
                     @if (Auth::user()->hasRole('USER'))
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ Route::is('user-profile') ? 'active' : '' }}" id="navbarDropdownUser" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">User profile</a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                            <ul class="dropdown-menu dropdown-menu-end mb-3" aria-labelledby="navbarDropdownUser">
                                 <li>
                                     <a class="dropdown-item {{ Route::is('user-profile') ? 'active' : '' }}" {{ Route::is('user-profile') ? 'aria-current=page' : '' }} href="{{ route('user-profile') }}">Go to user profile</a>
                                 </li>

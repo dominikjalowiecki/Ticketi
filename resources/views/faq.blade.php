@@ -65,7 +65,7 @@
                         <p class="text-muted mb-4">
                             Use contact form
                             <br />
-                            <a href="{{ route('user-contact-form') }}" class="btn btn-outline-primary">Contact form</a>
+                            <a href="{{ route('user-contact-form') }}" class="btn btn-outline-primary mt-2">Contact form</a>
                         </p>
                         <div class="h6 fw-bolder">Follow us</div>
                         <a class="fs-5 px-2 link-dark" href="https://github.com/dominikjalowiecki"><i class="bi-github"></i></a>

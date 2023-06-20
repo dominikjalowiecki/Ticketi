@@ -28,9 +28,6 @@
         {!! QrCode::size(300)->generate(URL::signedRoute('ticket', [$ticket->id_order])) !!}
         </div>
     </div>
-    <div class="row mb-3">
-        <p class="text-muted">{{ $ticket->id_order }}</p>
-    </div>
     <div class="row mb-5">
         <p class="fw-bold">
         Event: {{ $ticket->id_event . '. ' . $ticket->event_name }}
