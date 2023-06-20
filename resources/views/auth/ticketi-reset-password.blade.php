@@ -43,5 +43,5 @@
 
 @push('scripts')
 <!-- Page specific JS-->
-<script type="module" src="{{ asset('js/reset-password.js') }}"></script>
+<script type="module" src="{{ mix('/js/build/reset-password.js') }}"></script>
 @endpush

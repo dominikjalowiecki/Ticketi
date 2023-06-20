@@ -134,6 +134,6 @@
 
 @push('scripts')
 <script src="{{ asset('js/Chart.min.js') }}"></script>
-<script src="{{ asset('js/revenue-chart.js') }}"></script>
-<script src="{{ asset('js/categories-chart.js') }}"></script>
+<script src="{{ mix('/js/build/revenue-chart.js') }}"></script>
+<script src="{{ mix('/js/build/categories-chart.js') }}"></script>
 @endpush

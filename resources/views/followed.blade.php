@@ -95,5 +95,5 @@
 
 @push('scripts')
 <!-- Page specific JS-->
-<script type="module" src="{{ asset('js/followed.js') }}"></script>
+<script type="module" src="{{ mix('/js/build/followed.js') }}"></script>
 @endpush

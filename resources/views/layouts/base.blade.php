@@ -22,7 +22,7 @@
     <!-- Bootstrap core JS-->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <!-- Core theme JS-->
-    <script type="module" src="{{ asset('js/scripts.js') }}"></script>
+    <script type="module" src="{{ mix('/js/build/scripts.js') }}"></script>
     @endprepend
     @stack('scripts')
 </body>

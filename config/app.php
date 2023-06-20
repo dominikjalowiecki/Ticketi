@@ -235,5 +235,5 @@ return [
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
     ],
-
+    'mix_url' => env('MIX_ASSET_URL', env('APP_URL', 'http://localhost')),
 ];

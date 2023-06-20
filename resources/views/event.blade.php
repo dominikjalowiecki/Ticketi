@@ -278,5 +278,5 @@
 
 @push('scripts')
 <!-- Page specific JS-->
-<script type="module" src="{{ asset('js/event.js') }}"></script>
+<script type="module" src="{{ mix('/js/build/event.js') }}"></script>
 @endpush

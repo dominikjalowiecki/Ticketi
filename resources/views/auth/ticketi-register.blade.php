@@ -69,5 +69,5 @@
 
 @push('scripts')
 <!-- Page specific JS-->
-<script type="module" src="{{ asset('js/register.js') }}"></script>
+<script type="module" src="{{ mix('/js/build/register.js') }}"></script>
 @endpush

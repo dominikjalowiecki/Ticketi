@@ -1,4 +1,16 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/build/adm-datatables-simple.js": "/js/build/adm-datatables-simple.js?id=36d4e15b890d5baf37d8e0d0b73276f4",
+    "/js/build/adm-scripts.js": "/js/build/adm-scripts.js?id=a32123cd715ed254b84f4b1e60458669",
+    "/js/build/ajax.js": "/js/build/ajax.js?id=2827bd370e7a3030ba68afe674b2c9fa",
+    "/js/build/categories-chart.js": "/js/build/categories-chart.js?id=de4051957274552635d0e7455805574a",
+    "/js/build/create-event.js": "/js/build/create-event.js?id=73fe6bf47cf2c3e7d469373b3f12de5f",
+    "/js/build/event.js": "/js/build/event.js?id=4befce054eafad878e7f3c39e1853403",
+    "/js/build/events.js": "/js/build/events.js?id=3a2ee1d8ddbd85e17a788b58dbb124be",
+    "/js/build/followed.js": "/js/build/followed.js?id=673856f440fc921a91306eab82af5f7e",
+    "/js/build/helper.js": "/js/build/helper.js?id=f32625ff2dc021972d008aeb95a4c5c5",
+    "/js/build/quill.js": "/js/build/quill.js?id=9a078f5255729f7d5560960d19cddb84",
+    "/js/build/register.js": "/js/build/register.js?id=0d8c8aaff5f03eee996b3bbb3c49eba7",
+    "/js/build/reset-password.js": "/js/build/reset-password.js?id=5bf16fd6405a39424e85e8850360db50",
+    "/js/build/revenue-chart.js": "/js/build/revenue-chart.js?id=8bea4f33427fe8bf55113187f91df332",
+    "/js/build/scripts.js": "/js/build/scripts.js?id=d6b981ced961c571968cf1233aa3a697"
 }

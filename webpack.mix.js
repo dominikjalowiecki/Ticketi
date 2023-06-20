@@ -1,4 +1,6 @@
 const mix = require("laravel-mix");
+const path = require("path");
+const fs = require("fs");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,8 +13,20 @@ const mix = require("laravel-mix");
  |
  */
 
-mix.js("resources/js/app.js", "public/js").postCss(
-    "resources/css/app.css",
-    "public/css",
-    [require("tailwindcss"), require("autoprefixer")]
-);
+const sourcePath = "resources/js/";
+const destinationPath = "public/js/build/";
+
+const directoryPath = path.join(__dirname, "resources/js");
+fs.readdir(directoryPath, (err, files) => {
+    // Handle error
+    if (err) return console.log("Unable to scan directory: " + err);
+
+    // Get names of files to build
+    files.forEach((file) => {
+        mix.babel(`${sourcePath}${file}`, `${destinationPath}${file}`);
+    });
+
+    if (mix.inProduction()) {
+        mix.version();
+    }
+});

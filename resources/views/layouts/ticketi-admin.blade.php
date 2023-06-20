@@ -136,10 +136,10 @@
       </div>
     </div>
     @prepend('scripts')
-    <script type="module" src="{{ asset('js/adm-scripts.js') }}"></script>
+    <script type="module" src="{{ mix('/js/build/adm-scripts.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/simple-datatables.min.js') }}"></script>
-    <script src="{{ asset('js/adm-datatables-simple.js') }}"></script>
+    <script src="{{ mix('/js/build/adm-datatables-simple.js') }}"></script>
     @endprepend
     @stack('scripts')
   </body>

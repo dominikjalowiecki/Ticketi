@@ -267,6 +267,6 @@
 
 @push('scripts')
 <!-- Page specific JS-->
-<script src="{{ asset('js/quill.js') }}"></script>
-<script type="module" src="{{ asset('js/create-event.js') }}"></script>
+<script src="{{ mix('/js/build/quill.js') }}"></script>
+<script type="module" src="{{ mix('/js/build/create-event.js') }}"></script>
 @endpush
