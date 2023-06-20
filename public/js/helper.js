@@ -48,7 +48,9 @@ export function convertUTCToLocal() {
     for (const timeComponent of timeComponents) {
         if (timeComponent.classList.contains("converted")) continue;
 
-        const date = new Date(timeComponent.textContent);
+        const date = new Date(
+            timeComponent.textContent.replaceAll(" ", "T").replace("TUTC", "Z")
+        );
         timeComponent.textContent = date.toLocaleString();
         timeComponent.classList.add("converted");
     }

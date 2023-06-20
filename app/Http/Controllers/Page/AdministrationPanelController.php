@@ -126,7 +126,7 @@ class AdministrationPanelController extends Controller
                         'city' => 'Passed city does not exists!',
                     ]);
 
-                $city = $json['results'][0]['address_components'][0]['long_name'];
+                // $city = $json['results'][0]['address_components'][0]['long_name'];
 
                 $location = $json['results'][0]['geometry']['location'];
 
@@ -344,7 +344,7 @@ class AdministrationPanelController extends Controller
                         'city' => 'Passed city does not exists!',
                     ]);
 
-                $city = $json['results'][0]['address_components'][0]['long_name'];
+                // $city = $json['results'][0]['address_components'][0]['long_name'];
 
                 $location = $json['results'][0]['geometry']['location'];
 
@@ -424,13 +424,13 @@ class AdministrationPanelController extends Controller
                         ->get();
 
 
-                    if (!$media->empty()) {
+                    if (!$media->isEmpty()) {
                         $medium = $media->first();
-                        $id = $medium->id_medium;
+                        $idDelete = $medium->id_medium;
                         Storage::delete($medium->url);
 
                         $media = DB::table('medium')
-                            ->where('id_medium', $id)
+                            ->where('id_medium', $idDelete)
                             ->delete();
                     }
 
