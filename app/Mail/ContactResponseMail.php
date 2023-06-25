@@ -11,7 +11,7 @@ class ContactResponseMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $subject;
+    public $contactMailSubject;
     public $content;
 
     /**
@@ -21,7 +21,7 @@ class ContactResponseMail extends Mailable implements ShouldQueue
      */
     public function __construct(string $subject, string $content)
     {
-        $this->subject = $subject;
+        $this->contactMailSubject = $subject;
         $this->content = $content;
     }
 

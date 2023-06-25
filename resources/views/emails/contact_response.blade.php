@@ -6,7 +6,7 @@ Thank you for contact! We will respond soon.
 Team Ticketi
 
 @component('mail::panel')
-* Subject: *"{{ $subject }}"*<br />
+* Subject: *"{{ $contactMailSubject }}"*<br />
 * Your message: *"{{ $content }}"*
 @endcomponent
 
