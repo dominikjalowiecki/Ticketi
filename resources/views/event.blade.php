@@ -228,7 +228,7 @@
     @auth
     @if (Auth::user()->hasRole('USER'))
     <div class="mb-4">
-    <form id="commentForm" class="needs-validation"  method="POST" action="{{ route('event.addComment') }}" onsubmit="return false;" novalidate>
+    <form id="commentForm" class="needs-validation" method="POST" action="{{ route('event.addComment') }}" onsubmit="return false;">
         @csrf
         <input type="hidden" name="idEvent" value="{{ $event->id_event }}">
         <div class="mb-3">
@@ -241,6 +241,7 @@
             name="comment"
             maxlength="200"
             rows="4"
+            required
         ></textarea>
         </div>
         <button
