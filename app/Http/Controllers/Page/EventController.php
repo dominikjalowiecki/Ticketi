@@ -42,9 +42,9 @@ class EventController extends Controller
         }
 
         $search = $request->search;
-        if ($search !== null) {
+        if ($search !== null && $search !== '*') {
             $query = $query
-                ->whereRaw(DB::raw("MATCH (events_list.name, events_list.description, events_list.tags) AGAINST ('$search' IN NATURAL LANGUAGE MODE)"));
+                ->whereRaw(DB::raw("MATCH (events_list.name, events_list.description, events_list.tags) AGAINST (? IN NATURAL LANGUAGE MODE)"), [$search]);
         }
 
         $category = $request->category;

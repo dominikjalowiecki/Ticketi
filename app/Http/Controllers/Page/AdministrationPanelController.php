@@ -544,9 +544,9 @@ class AdministrationPanelController extends Controller
         $query = DB::table('event')
             ->join('category', 'event.id_category', '=', 'category.id_category');
 
-        if ($request->s != null) {
+        if ($request->s != null && $request->s !== '*') {
             $search = $request->s;
-            $query = $query->whereRaw(DB::raw("MATCH (event.name, event.description, event.tags) AGAINST ('$search' IN NATURAL LANGUAGE MODE)"));
+            $query = $query->whereRaw(DB::raw("MATCH (event.name, event.description, event.tags) AGAINST (? IN NATURAL LANGUAGE MODE)"), [$search]);
         }
 
         $events = $query->select('event.*', 'category.name AS category_name')
